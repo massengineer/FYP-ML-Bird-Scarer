@@ -1,0 +1,5 @@
+yolo_bird_recognition/
+*.pt
+*.mp4
+recordings/
+__pycache__/
