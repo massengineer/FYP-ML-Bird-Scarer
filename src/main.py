@@ -102,7 +102,7 @@ def main():
                     if (now - last_audio_time) > audio_cooldown:
                         if is_bluetooth_connected():
                             play_hawk_screech(
-                                "../audio_samples/528625__justinamolsch__hawk-screech.wav"
+                                "audio_samples/528625__justinamolsch__hawk-screech.wav"
                             )
                             last_audio_time = now
                     else:
