@@ -2,7 +2,7 @@ from ultralytics import YOLO
 
 
 class MLBirdClassifier:
-    def __init__(self, model_path="yolov8n_ncnn_model"):
+    def __init__(self, model_path="models/yolov8n_ncnn_model"):
         # Load the model once to save memory
         self.model = YOLO(model_path, task="detect")
         self.target_id = 14  # COCO ID for 'bird'

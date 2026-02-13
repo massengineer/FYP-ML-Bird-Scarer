@@ -6,6 +6,7 @@ from datetime import datetime
 import subprocess
 from libcamera import controls
 from bird_recognition import MLBirdClassifier
+from picamera2.encoders import H264Encoder
 
 # Set GPIO mode to BCM (alternative is BOARD mode)
 GPIO.setmode(GPIO.BCM)
@@ -36,9 +37,10 @@ class CameraRecorder:
     def start_recording(self):
         if not self.recording:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = f"{self.output_dir}/recording_{timestamp}.mp4"
+            filename = f"{self.output_dir}/recording_{timestamp}.h264"
             try:
-                self.picam2.start_recording(filename)
+                encoder = H264Encoder(10000000)
+                self.picam2.start_recording(encoder, filename)
                 self.recording = True
                 print(f"Recording started: {filename}")
             except Exception as e:
