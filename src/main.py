@@ -1,11 +1,11 @@
-from picamzero import Camera
+from picamera2 import Picamera2
 import RPi.GPIO as GPIO
 import time
 import os
 from datetime import datetime
 import subprocess
-from picamera2 import Picamera2
 from libcamera import controls
+from bird_recognition import MLBirdClassifier
 
 # Set GPIO mode to BCM (alternative is BOARD mode)
 GPIO.setmode(GPIO.BCM)
@@ -16,7 +16,7 @@ BCM4 = 4
 GPIO.setup(BCM4, GPIO.IN)  # BCM4 as input
 
 
-class BirdScarerSystem:
+class CameraRecorder:
     def __init__(self):
         # 1. Shared Camera Setup (Picamera2)
         self.picam2 = Picamera2()
@@ -28,32 +28,9 @@ class BirdScarerSystem:
         self.picam2.set_controls({"AfMode": controls.AfModeEnum.Continuous})
 
         # 2. Components
-        self.detector = BirdDetector()
+        self.detector = MLBirdClassifier()
         self.recording = False
         self.output_dir = "/home/dys/pi/recordings"
-        if not os.path.exists(self.output_dir):
-            os.makedirs(self.output_dir)
-
-    def start_video(self):
-        if not self.recording:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            self.picam2.start_recording(f"{self.output_dir}/bird_{timestamp}.h264")
-            self.recording = True
-
-    def stop_video(self):
-        if self.recording:
-            self.picam2.stop_recording()
-            self.recording = False
-
-
-class CameraRecorder:
-    def __init__(self):
-        self.recording = False
-        self.output_dir = "/home/dys/pi/recordings"  # Video storage path
-        self.camera = Camera()
-        self.camera.resolution = (1920, 1080)
-        self.camera.framerate = 30
-        # Create recording directory
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
 
@@ -62,7 +39,7 @@ class CameraRecorder:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filename = f"{self.output_dir}/recording_{timestamp}.mp4"
             try:
-                self.camera.start_recording(filename)
+                self.picam2.start_recording(filename)
                 self.recording = True
                 print(f"Recording started: {filename}")
             except Exception as e:
@@ -71,7 +48,7 @@ class CameraRecorder:
     def stop_recording(self):
         if self.recording:
             try:
-                self.camera.stop_recording()
+                self.picam2.stop_recording()
             except Exception as e:
                 print(f"Failed to stop recording: {e}")
             self.recording = False
@@ -122,7 +99,9 @@ def main():
                     )
                 else:
                     print("ESP32 not found! Attempting to reconnect...")
-                    subprocess.run(["bluetoothctl", "connect", "00:70:07:83:96:E2"])
+                    subprocess.run(
+                        ["bluetoothctl", "connect", "00:70:07:83:96:E2"]
+                    )  # Replace with your ESP32's MAC address
                     # GPIO.output(BCM17, GPIO.HIGH)
                 if not recorder.recording:
                     print("bird detected - starting recording")

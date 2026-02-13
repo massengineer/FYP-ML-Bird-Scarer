@@ -3,3 +3,4 @@ yolo_bird_recognition/
 *.mp4
 recordings/
 __pycache__/
+.env/

@@ -1,19 +1,30 @@
 import cv2
-from picamera2 import Picamera2
 from ultralytics import YOLO
-from libcamera import controls
 
-# Set up the camera with Picam
-picam2 = Picamera2()
-picam2.preview_configuration.main.size = (1280, 1280)
-picam2.preview_configuration.main.format = "RGB888"
-picam2.preview_configuration.align()
-picam2.configure("preview")
-picam2.start()
-picam2.set_controls({"AfMode": controls.AfModeEnum.Continuous})
 
-# Load YOLOv8
-model = YOLO("yolov8n_ncnn_model")
+class MLBirdClassifier:
+    def __init__(self, model_path="yolov8n_ncnn_model"):
+        # Load the model once to save memory
+        self.model = YOLO(model_path, task="detect")
+        self.target_id = 14  # COCO ID for 'bird'
+
+    def scan_frame(self, frame):
+        """Processes a frame and returns (is_bird, annotated_image)"""
+        results = self.model(frame, stream=True, verbose=False)
+        is_bird = False
+
+        for result in results:
+            # Check if any detected box is a bird with > 50% confidence
+            for box in result.boxes:
+                if int(box.cls[0]) == self.target_id and float(box.conf[0]) > 0.5:
+                    is_bird = True
+
+            # Create the frame with boxes/labels for display or debugging
+            annotated_frame = result.plot()
+            return is_bird, annotated_frame
+
+        return False, frame
+
 
 while True:
     # Capture a frame from the camera
@@ -47,13 +58,3 @@ while True:
         2,
         cv2.LINE_AA,
     )
-
-    # Display the resulting frame
-    cv2.imshow("Camera", annotated_frame)
-
-    # Exit the program if q is pressed
-    if cv2.waitKey(1) == ord("q"):
-        break
-
-# Close all windows
-cv2.destroyAllWindows()
