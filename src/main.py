@@ -18,7 +18,6 @@ GPIO.setup(BCM4, GPIO.IN)  # BCM4 as input
 
 class CameraRecorder:
     def __init__(self):
-        # 1. Shared Camera Setup (Picamera2)
         self.picam2 = Picamera2()
         config = self.picam2.create_video_configuration(
             main={"size": (1280, 720), "format": "RGB888"}
@@ -27,8 +26,8 @@ class CameraRecorder:
         self.picam2.start()
         self.picam2.set_controls({"AfMode": controls.AfModeEnum.Continuous})
 
-        # 2. Components
-        self.detector = MLBirdClassifier()
+        # Components
+        self.classifier = MLBirdClassifier()
         self.recording = False
         self.output_dir = "/home/dys/pi/recordings"
         if not os.path.exists(self.output_dir):
@@ -79,7 +78,9 @@ def is_bluetooth_connected():
 
 def main():
     recorder = CameraRecorder()
-    last_bird_time = None
+    last_bird_time = 0
+    audio_cooldown = 15  # Seconds to wait before playing screech again
+    last_audio_time = 0
     stop_delay = 5  # Stop recording after X seconds
 
     print("Sensor camera recording system activated...")
@@ -87,41 +88,45 @@ def main():
 
     try:
         while True:
-            bird_detected = GPIO.input(BCM4)
+            movement_detected = GPIO.input(BCM4)
             now = time.time()
 
-            if bird_detected:
-                last_bird_time = now
-                # In your main loop:
-                if is_bluetooth_connected():
-                    play_hawk_screech(
-                        "../audio_samples/528625__justinamolsch__hawk-screech.wav"
-                    )
+            if movement_detected:
+                frame = recorder.picam2.capture_array()
+                is_bird, annotated_frame = recorder.classifier.scan_frame(frame)
+
+                if is_bird:
+                    last_bird_time = now
+                    if (now - last_audio_time) > audio_cooldown:
+                        if is_bluetooth_connected():
+                            play_hawk_screech(
+                                "../audio_samples/528625__justinamolsch__hawk-screech.wav"
+                            )
+                            last_audio_time = now
+                    else:
+                        print("ESP32 not found! Attempting to reconnect...")
+                        subprocess.run(
+                            ["bluetoothctl", "connect", "00:70:07:83:96:E2"]
+                        )  # Replace with your ESP32's MAC address
+                        # GPIO.output(BCM17, GPIO.HIGH)
+                    if not recorder.recording:
+                        print("bird detected - starting recording")
+                        recorder.start_recording()
+                    else:
+                        print("Bird present")
                 else:
-                    print("ESP32 not found! Attempting to reconnect...")
-                    subprocess.run(
-                        ["bluetoothctl", "connect", "00:70:07:83:96:E2"]
-                    )  # Replace with your ESP32's MAC address
-                    # GPIO.output(BCM17, GPIO.HIGH)
-                if not recorder.recording:
-                    print("bird detected - starting recording")
-                    recorder.start_recording()
-                else:
-                    print("Bird present")
-            else:
-                # GPIO.output(BCM17, GPIO.LOW)
-                if recorder.recording:
-                    # If recording and no bird detected for stop_delay seconds, stop
-                    if (
-                        last_bird_time is not None
-                        and (now - last_bird_time) > stop_delay
-                    ):
-                        print(
-                            f"No bird detected for {stop_delay} seconds - stopping recording"
-                        )
-                        recorder.stop_recording()
-                print("No bird detected")
-            time.sleep(0.5)  # Detection interval
+                    if recorder.recording:
+                        # If recording and no bird detected for stop_delay seconds, stop
+                        if (
+                            last_bird_time is not None
+                            and (now - last_bird_time) > stop_delay
+                        ):
+                            print(
+                                f"No bird detected for {stop_delay} seconds - stopping recording"
+                            )
+                            recorder.stop_recording()
+                    print("No bird detected")
+                time.sleep(0.5)  # Detection interval
 
     except KeyboardInterrupt:
         print("\nProgram interrupted...")
