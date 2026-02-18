@@ -72,7 +72,7 @@ def play_hawk_screech(file_path):
 
 def is_bluetooth_connected():
     # Checks if the ESP32 sink is currently available
-    result = subprocess.Popen(
+    result = subprocess.run(
         ["pactl", "list", "short", "sinks"], capture_output=True, text=True
     )
     return "bluez_output" in result.stdout
@@ -107,7 +107,7 @@ def main():
                             last_audio_time = now
                         else:
                             print("ESP32 not found! Attempting to reconnect...")
-                            subprocess.Popen(
+                            subprocess.run(
                                 ["bluetoothctl", "connect", "00:70:07:83:96:E2"]
                             )  # Replace with ESP32's MAC address
 
