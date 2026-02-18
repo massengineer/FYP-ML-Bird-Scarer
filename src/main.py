@@ -72,7 +72,7 @@ def play_hawk_screech(file_path):
 
 def is_bluetooth_connected():
     # Checks if the ESP32 sink is currently available
-    result = subprocess.run(
+    result = subprocess.Popen(
         ["pactl", "list", "short", "sinks"], capture_output=True, text=True
     )
     return "bluez_output" in result.stdout
@@ -95,7 +95,7 @@ def main():
 
             if movement_detected:
                 frame = recorder.picam2.capture_array()
-                is_bird = recorder.classifier.scan_frame(frame)
+                is_bird, _ = recorder.classifier.scan_frame(frame)
 
                 if is_bird:
                     last_bird_time = now
