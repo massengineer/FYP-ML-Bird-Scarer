@@ -23,6 +23,7 @@ class MLBirdClassifier:
 
             # Create the frame with boxes/labels for display or debugging
             annotated_frame = result.plot()
-            return is_bird, annotated_frame
 
-        return False, frame
+        return is_bird, annotated_frame
+
+        # return False, frame
