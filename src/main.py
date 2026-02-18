@@ -64,7 +64,7 @@ def play_hawk_screech(file_path):
             "pactl list short sinks | grep bluez | cut -f2 | xargs -I{} pactl set-sink-volume {} 100%"
         )
         # 'paplay' sends the file to the default audio output (your ESP32)
-        subprocess.Popen(["paplay", file_path], check=True)
+        subprocess.run(["paplay", file_path], check=True)
         print("Playback finished.")
     except subprocess.CalledProcessError as e:
         print(f"Error: Could not play file. Is Bluetooth connected? {e}")
@@ -81,7 +81,7 @@ def is_bluetooth_connected():
 def main():
     recorder = CameraRecorder()
     last_bird_time = 0
-    audio_cooldown = 15  # Seconds to wait before playing screech again
+    audio_cooldown = 0  # Seconds to wait before playing screech again
     last_audio_time = 0
     stop_delay = 5  # Stop recording after X seconds
 
@@ -95,7 +95,7 @@ def main():
 
             if movement_detected:
                 frame = recorder.picam2.capture_array()
-                is_bird, _ = recorder.classifier.scan_frame(frame)
+                is_bird = recorder.classifier.scan_frame(frame)
 
                 if is_bird:
                     last_bird_time = now
