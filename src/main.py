@@ -24,6 +24,7 @@ class CameraRecorder:
             main={"size": (1280, 720), "format": "RGB888"}
         )
         self.picam2.configure(config)
+        self.encoder = H264Encoder(10000000)
         self.picam2.start()
         self.picam2.set_controls({"AfMode": controls.AfModeEnum.Continuous})
 
@@ -39,8 +40,7 @@ class CameraRecorder:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filename = f"{self.output_dir}/recording_{timestamp}.h264"
             try:
-                encoder = H264Encoder(10000000)
-                self.picam2.start_recording(encoder, filename)
+                self.picam2.start_recording(self.encoder, filename)
                 self.recording = True
                 print(f"Recording started: {filename}")
             except Exception as e:
@@ -64,7 +64,7 @@ def play_hawk_screech(file_path):
             "pactl list short sinks | grep bluez | cut -f2 | xargs -I{} pactl set-sink-volume {} 100%"
         )
         # 'paplay' sends the file to the default audio output (your ESP32)
-        subprocess.run(["paplay", file_path], check=True)
+        subprocess.Popen(["paplay", file_path], check=True)
         print("Playback finished.")
     except subprocess.CalledProcessError as e:
         print(f"Error: Could not play file. Is Bluetooth connected? {e}")
@@ -107,29 +107,32 @@ def main():
                             last_audio_time = now
                         else:
                             print("ESP32 not found! Attempting to reconnect...")
-                            subprocess.run(
+                            subprocess.Popen(
                                 ["bluetoothctl", "connect", "00:70:07:83:96:E2"]
                             )  # Replace with ESP32's MAC address
 
                     if not recorder.recording:
                         print("bird detected - starting recording")
                         recorder.start_recording()
-                    else:
-                        print("bird present - still recording")
 
-                else:
-                    if recorder.recording:
-                        # If recording and no bird detected for stop_delay seconds, stop
-                        if (
-                            last_bird_time is not None
-                            and (now - last_bird_time) > stop_delay
-                        ):
-                            print(
-                                f"No bird detected for {stop_delay} seconds - stopping recording"
-                            )
-                            recorder.stop_recording()
-                    print("No bird detected")
-                time.sleep(0.5)  # Detection interval
+                # If we are recording, check if we should stop
+                if recorder.recording:
+                    elapsed_since_bird = now - last_bird_time
+                    if elapsed_since_bird > stop_delay:
+                        print(f"No bird for {stop_delay}s. Stopping.")
+                        recorder.stop_recording()
+                    else:
+                        # Keep recording
+                        pass
+
+            else:
+                # Even if no PIR movement, if we are currently recording,
+                # we must check the timeout to see if we should stop.
+                if recorder.recording:
+                    if (now - last_bird_time) > stop_delay:
+                        recorder.stop_recording()
+
+            time.sleep(0.1)  # Faster check interval for smoother video
 
     except KeyboardInterrupt:
         print("\nProgram interrupted...")
