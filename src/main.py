@@ -95,7 +95,7 @@ def main():
 
             if movement_detected:
                 frame = recorder.picam2.capture_array()
-                is_bird, annotated_frame = recorder.classifier.scan_frame(frame)
+                is_bird = recorder.classifier.scan_frame(frame)
 
                 if is_bird:
                     last_bird_time = now
@@ -105,17 +105,18 @@ def main():
                                 "/home/dys/pi/intelligent_bird_scarer/audio_samples/528625__justinamolsch__hawk-screech.wav"
                             )
                             last_audio_time = now
-                    else:
-                        print("ESP32 not found! Attempting to reconnect...")
-                        subprocess.run(
-                            ["bluetoothctl", "connect", "00:70:07:83:96:E2"]
-                        )  # Replace with your ESP32's MAC address
-                        # GPIO.output(BCM17, GPIO.HIGH)
+                        else:
+                            print("ESP32 not found! Attempting to reconnect...")
+                            subprocess.run(
+                                ["bluetoothctl", "connect", "00:70:07:83:96:E2"]
+                            )  # Replace with ESP32's MAC address
+
                     if not recorder.recording:
                         print("bird detected - starting recording")
                         recorder.start_recording()
                     else:
-                        print("Bird present")
+                        print("bird present - still recording")
+
                 else:
                     if recorder.recording:
                         # If recording and no bird detected for stop_delay seconds, stop
