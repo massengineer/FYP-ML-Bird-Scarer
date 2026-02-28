@@ -13,22 +13,24 @@ picam2.start()
 picam2.set_controls({"AfMode": controls.AfModeEnum.Continuous})
 
 # Load YOLOv8
-model = YOLO("yolov8n_ncnn_model")
+model = YOLO(
+    "/home/dys/pi/intelligent_bird_scarer/models/my_first_trained_model_ncnn_model"
+)
 
 while True:
     # Capture a frame from the camera
     frame = picam2.capture_array()
-    
+
     # Run YOLO model on the captured frame and store the results
     results = model(frame)
-    
+
     # Output the visual detection data, we will draw this on our camera preview window
     annotated_frame = results[0].plot()
-    
+
     # Get inference time
-    inference_time = results[0].speed['inference']
+    inference_time = results[0].speed["inference"]
     fps = 1000 / inference_time  # Convert to milliseconds
-    text = f'FPS: {fps:.1f}'
+    text = f"FPS: {fps:.1f}"
 
     # Define font and position
     font = cv2.FONT_HERSHEY_SIMPLEX
@@ -37,7 +39,16 @@ while True:
     text_y = text_size[1] + 10  # 10 pixels from the top
 
     # Draw the text on the annotated frame
-    cv2.putText(annotated_frame, text, (text_x, text_y), font, 1, (255, 255, 255), 2, cv2.LINE_AA)
+    cv2.putText(
+        annotated_frame,
+        text,
+        (text_x, text_y),
+        font,
+        1,
+        (255, 255, 255),
+        2,
+        cv2.LINE_AA,
+    )
 
     # Display the resulting frame
     cv2.imshow("Camera", annotated_frame)
