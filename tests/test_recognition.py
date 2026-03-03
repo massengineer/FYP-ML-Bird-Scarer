@@ -14,7 +14,7 @@ picam2.set_controls({"AfMode": controls.AfModeEnum.Continuous})
 
 # Load YOLOv8
 model = YOLO(
-    "/home/dys/pi/intelligent_bird_scarer/models/my_first_trained_model_ncnn_model"
+    "/home/dys/pi/intelligent_bird_scarer/models/my_third_trained_model_ncnn_model"
 )
 
 while True:

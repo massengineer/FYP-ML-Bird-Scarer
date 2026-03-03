@@ -1,7 +1,7 @@
 from ultralytics import YOLO
 
-# Use the full path to where 'best.pt' or 'my_first_trained_model.pt' is saved
-model = YOLO("/home/dys/pi/intelligent_bird_scarer/models/my_first_trained_model.pt")
+# Use the full path to where 'best.pt' or 'my_[number]_trained_model.pt' is saved
+model = YOLO("/home/dys/pi/intelligent_bird_scarer/models/my_third_trained_model.pt")
 
 # 2. Export to NCNN
 # imgsz: Should match the size used during training (usually 640)

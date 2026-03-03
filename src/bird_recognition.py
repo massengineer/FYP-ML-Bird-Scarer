@@ -4,19 +4,13 @@ from ultralytics import YOLO
 class MLBirdClassifier:
     def __init__(
         self,
-        model_path="/home/dys/pi/intelligent_bird_scarer/models/yolov8n_ncnn_model",
+        model_path="/home/dys/pi/intelligent_bird_scarer/models/my_third_trained_model_ncnn_model",
     ):
         # Load the model once to save memory
         self.model = YOLO(model_path, task="detect")
-        # self.duck_id = 0  # ID for 'duck'
-        # self.target_id = [
-        #     1,
-        #     2,
-        #     3,
-        #     4,
-        #     5,
-        # ]  # IDs for 'pheasant, pigeon, raven, sparrow, starling'
-        self.target_id = 14  # ID for 'bird'
+        self.duck_id = 0  # ID for 'duck'
+        self.target_id = [1, 2]  # IDs for 'raven, sparrow'
+        # self.target_id = 14  # ID for 'bird'
 
     def scan_frame(self, frame):
         """Processes a frame and returns (is_bird, annotated_image)"""
