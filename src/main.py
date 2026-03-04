@@ -96,6 +96,10 @@ def main():
             movement_detected = GPIO.input(BCM4)
 
             if movement_detected:
+                # 1. Handle Recording
+                if not recorder.recording:
+                    recorder.start_recording()
+
                 frame = recorder.picam2.capture_array()
                 # UNPACKING: This ensures is_bird is a boolean, not a tuple
                 is_bird, _ = recorder.classifier.scan_frame(frame)
@@ -103,7 +107,7 @@ def main():
                 if is_bird:
                     last_bird_time = now  # Reset the 'post-roll' timer
 
-                    # 1. Handle Audio (Non-blocking)
+                    # 2. Handle Audio (Non-blocking)
                     if (now - last_audio_time) > audio_cooldown:
                         if is_bluetooth_connected():
                             play_hawk_screech(
@@ -120,11 +124,10 @@ def main():
                                 ]
                             )
 
-                    # 2. Handle Recording
-                    if not recorder.recording:
-                        recorder.start_recording()
                 else:
-                    print("PIR High, but AI says: Not a Bird")
+                    print(
+                        "PIR High! Movement detected (Animal/Other), recording in progress..."
+                    )
 
             # --- Persistent Stop Logic ---
             # This runs every loop, even if movement_detected is False
