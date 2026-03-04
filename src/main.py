@@ -82,7 +82,7 @@ def is_bluetooth_connected():
 
 def main():
     recorder = CameraRecorder()
-    last_bird_time = 0
+    last_motion_time = 0
     audio_cooldown = 15
     last_audio_time = 0
     stop_delay = 5  # Keeps recording for 5 seconds after the bird leaves
@@ -96,18 +96,20 @@ def main():
             movement_detected = GPIO.input(BCM4)
 
             if movement_detected:
-                # 1. Handle Recording
+                # 1. Update the motion timer every time the PIR is high
+                last_motion_time = now
+
+                # 2. Start recording immediately if not already recording
                 if not recorder.recording:
                     recorder.start_recording()
 
+                # 3. AI Scan (Does not affect the recording duration)
                 frame = recorder.picam2.capture_array()
                 # UNPACKING: This ensures is_bird is a boolean, not a tuple
                 is_bird, _ = recorder.classifier.scan_frame(frame)
 
                 if is_bird:
-                    last_bird_time = now  # Reset the 'post-roll' timer
-
-                    # 2. Handle Audio (Non-blocking)
+                    # Handle Audio (Non-blocking)
                     if (now - last_audio_time) > audio_cooldown:
                         if is_bluetooth_connected():
                             play_hawk_screech(
@@ -132,7 +134,7 @@ def main():
             # --- Persistent Stop Logic ---
             # This runs every loop, even if movement_detected is False
             if recorder.recording:
-                if (now - last_bird_time) > stop_delay:
+                if (now - last_motion_time) > stop_delay:
                     print(f"No bird for {stop_delay}s. Stopping.")
                     recorder.stop_recording()
 
