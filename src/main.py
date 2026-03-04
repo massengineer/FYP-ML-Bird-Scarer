@@ -8,6 +8,12 @@ from picamera2.encoders import H264Encoder
 from libcamera import controls
 from bird_recognition import MLBirdClassifier
 
+# importing necessary functions from dotenv library
+from dotenv import load_dotenv
+
+# loading variables from .env file
+load_dotenv()
+
 # --- Hardware Setup ---
 GPIO.setmode(GPIO.BCM)
 BCM4 = 4
@@ -107,7 +113,11 @@ def main():
                         else:
                             print("ESP32 missing! Reconnecting...")
                             subprocess.Popen(
-                                ["bluetoothctl", "connect", "00:70:07:83:96:E2"]
+                                [
+                                    "bluetoothctl",
+                                    "connect",
+                                    os.getenv("ESP32_MAC_ADDRESS"),
+                                ]
                             )
 
                     # 2. Handle Recording

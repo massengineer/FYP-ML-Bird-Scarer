@@ -10,7 +10,7 @@ class MLBirdClassifier:
         self.model = YOLO(model_path, task="detect")
         self.duck_id = 0  # ID for 'duck'
         self.target_id = [1, 2]  # IDs for 'raven, sparrow'
-        # self.target_id = 14  # ID for 'bird'
+        # self.target_id = 14  # ID for 'bird' in COCO dataset
 
     def scan_frame(self, frame):
         """Processes a frame and returns (is_bird, annotated_image)"""
@@ -20,7 +20,7 @@ class MLBirdClassifier:
         for result in results:
             # Check if any detected box is a pest bird with > 50% confidence
             for box in result.boxes:
-                if int(box.cls[0]) == self.target_id and float(box.conf[0]) > 0.5:
+                if int(box.cls[0]) in self.target_id and float(box.conf[0]) > 0.5:
                     is_bird = True
                     print(
                         f"Detected: {result.names[int(box.cls[0])]} ({float(box.conf[0]):.2f})"
