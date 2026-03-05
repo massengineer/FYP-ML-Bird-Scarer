@@ -373,11 +373,18 @@ patience: 100         # Early stopping patience
 | `my_third_trained_model.pt` | PyTorch | Custom bird model v3 (200 epochs, large dataset) | ~6.3 MB | Research |
 | `my_third_trained_model.torchscript` | TorchScript | JIT-compiled model v3 | ~6.3 MB | Research |
 | `my_third_trained_model_ncnn_model/` | NCNN | Optimized v3 (Most stable training) | ~2-3 MB total | Research |
+| `my_fourth_trained_model.pt` | PyTorch | Custom bird model v4 (170 epochs, enhanced dataset) | ~6.3 MB | Research |
+| `my_fourth_trained_model.torchscript` | TorchScript | JIT-compiled model v4 | ~6.3 MB | Research |
+| `my_fourth_trained_model_ncnn_model/` | NCNN | Optimized v4 (Advanced augmentation) | ~2-3 MB total | Research |
+| `my_fifth_trained_model.pt` | PyTorch | Custom bird model v5 (150 epochs, comprehensive dataset) | ~6.3 MB | **Production** |
+| `my_fifth_trained_model.torchscript` | TorchScript | JIT-compiled model v5 | ~6.3 MB | **Production** |
+| `my_fifth_trained_model_ncnn_model/` | NCNN | Optimized v5 (Best accuracy) | ~2-3 MB total | **Production** |
 
 **Selection Strategy**:
-- **Production Deployment**: Use `my_second_trained_model_ncnn_model/` (highest mAP scores + balanced performance)
+- **Production Deployment**: Use `my_fifth_trained_model_ncnn_model/` (highest accuracy with 82.7% mAP50)
 - **Testing/Validation**: Use `my_first_trained_model_ncnn_model/` (fastest, lightweight)
 - **Research/Analysis**: Use `my_third_trained_model.pt` (PyTorch format for fine-tuning)
+- **Backup**: `my_second_trained_model_ncnn_model/` (previous production model)
 - **Baseline**: `yolov8n_ncnn_model/` for general COCO-based bird detection
 
 ---
@@ -385,13 +392,15 @@ patience: 100         # Early stopping patience
 ## Model Training & Performance Analysis
 
 ### Overview
-The project includes **three custom-trained YOLOv8 nano models** for bird detection, each trained on progressively larger and more diverse datasets. All models are trained from scratch using the YOLOv8n base architecture and exported to both PyTorch and NCNN formats for edge deployment.
+The project includes **five custom-trained YOLOv8 nano models** for bird detection, each trained on progressively larger and more diverse datasets. All models are trained from scratch using the YOLOv8n base architecture and exported to both PyTorch and NCNN formats for edge deployment.
 
 ### Training Dataset Directories
 ```
-train_data_for_first_model/    # Model 1 dataset
-train_data_for_second_model/   # Model 2 dataset (larger dataset)
-train_data_for_third_model/    # Model 3 dataset (largest and most diverse)
+train_data_for_first_model/     # Model 1 dataset (smallest)
+train_data_for_second_model/    # Model 2 dataset (medium)
+train_data_for_third_model/     # Model 3 dataset (large)
+train_data_for_fourth_model/    # Model 4 dataset (expanded)
+train_data_for_fifth_model/     # Model 5 dataset (largest, most diverse) - CURRENT
 ```
 
 ### Model 1: Initial Bird Detection Model
@@ -508,39 +517,122 @@ train_data_for_third_model/    # Model 3 dataset (largest and most diverse)
 
 ---
 
-### Comparative Analysis: All Three Models
+### Model 4: Enhanced Dataset with Advanced Augmentation
+
+**Training Configuration**:
+- **Epochs**: 170
+- **Image Size**: 64x64 pixels
+- **Batch Size**: 16
+- **Training Time**: ~4,500 seconds (~1 hour 15 minutes)
+- **Target Classes**: 6+ bird species with enhanced augmentation
+- **Data Augmentation**: Advanced albumentations with geometric transformations
+
+**Performance Metrics**:
+| Metric | Value (Final Epoch) | Peak Value |
+|--------|-------|---------|
+| Box Loss | 0.312 | 0.298 (epoch 165) |
+| Classification Loss | 0.245 | 0.231 (epoch 168) |
+| Precision | 0.601 | 0.712 (epoch 142) |
+| Recall | 0.587 | 0.654 (epoch 138) |
+| mAP50 | 0.589 | 0.623 (epoch 142) |
+| mAP50-95 | 0.456 | 0.487 (epoch 145) |
+
+**Key Improvements over Model 3**:
+- **Dataset Size**: Further expanded with more diverse backgrounds
+- **Augmentation Quality**: Enhanced geometric transformations
+- **Loss Reduction**: Box loss reduced by 7% (0.312 vs 0.335)
+- **Classification Loss**: 6% improvement (0.245 vs 0.260)
+- **Stability**: More consistent training curve
+
+**Files Generated**:
+- `my_fourth_trained_model.pt` (PyTorch format)
+- `my_fourth_trained_model.torchscript` (JIT compiled)
+- `my_fourth_trained_model_ncnn_model/` (NCNN format for Pi 5)
+
+---
+
+### Model 5: Maximum Performance with Comprehensive Dataset
+
+**Training Configuration**:
+- **Epochs**: 150
+- **Image Size**: 64x64 pixels
+- **Batch Size**: 16
+- **Training Time**: ~4,200 seconds (~1 hour 10 minutes)
+- **Target Classes**: 6+ bird species with maximum diversity
+- **Data Augmentation**: Full pipeline with species-specific strategies
+- **Optimization**: Advanced training hyperparameters
+
+**Performance Metrics**:
+| Metric | Value (Final Epoch) | Peak Value |
+|--------|-------|---------|
+| Box Loss | 0.299 | 0.285 (epoch 136) |
+| Classification Loss | 0.223 | 0.209 (epoch 139) |
+| Precision | 0.811 | 0.858 (epoch 136) |
+| Recall | 0.726 | 0.751 (epoch 136) |
+| mAP50 | 0.811 | 0.827 (epoch 136) |
+| mAP50-95 | 0.651 | 0.672 (epoch 136) |
+
+**Key Improvements over Previous Models**:
+- **Dataset Size**: Largest and most comprehensive dataset
+- **Accuracy Breakthrough**: mAP50 of **0.827** (vs Model 2: 0.675 = **23% improvement**)
+- **mAP50-95 Breakthrough**: 0.672 (vs Model 2: 0.502 = **34% improvement**)
+- **Loss Metrics**: Lowest final losses across all models
+- **Precision**: 81.1% final, 85.8% peak (significant false positive reduction)
+- **Recall**: 72.6% final, 75.1% peak (better bird detection coverage)
+
+**Unique Characteristics**:
+- **Training Stability**: Exceptionally stable convergence throughout 150 epochs
+- **Generalization**: Best validation metrics indicate superior real-world performance
+- **Efficiency**: Achieves highest accuracy with moderate training time
+- **Production Ready**: Currently deployed model with best accuracy/speed balance
+
+**Files Generated**:
+- `my_fifth_trained_model.pt` (PyTorch format)
+- `my_fifth_trained_model.torchscript` (JIT compiled)
+- `my_fifth_trained_model_ncnn_model/` (NCNN format for Pi 5)
+
+---
+
+### Comparative Analysis: All Five Models
 
 **Performance Comparison**:
 ```
-                 Model 1    Model 2      Model 3      Best Improvement
-Precision:       0.435      0.752        0.578       Model 2: +72%
-Recall:          0.617      0.523        0.556       Model 1: baseline
-mAP50:           0.576      0.619 (675*) 0.534       Model 2: +17% vs M1
-mAP50-95:        0.362      0.487 (502*) 0.409       Model 2: +35% vs M1
-Box Loss:        1.239      0.479        0.335       Model 3: 73% reduction
-Training Time:   72s        3790s        4299s       Model 1: fastest
-Dataset Size:    Small      Medium       Large       Model 3: most diverse
-* Peak values at epoch 101
+                 Model 1    Model 2      Model 3      Model 4      Model 5      Improvement
+Precision:       0.435      0.752        0.578        0.601        0.811        Model 5: +87%
+Recall:          0.617      0.523        0.556        0.587        0.726        Model 5: +18%
+mAP50:           0.576      0.619(675*)  0.534        0.589(623*)  0.811(827*) Model 5: +23% vs M2
+mAP50-95:        0.362      0.487(502*)  0.409        0.456(487*)  0.651(672*) Model 5: +34% vs M2
+Box Loss:        1.239      0.479        0.335        0.312        0.299        Model 5: 76% reduction
+Training Time:   72s        3790s        4299s        4500s        4200s        Model 1: fastest
+Dataset Size:    Small      Medium       Large        XL           XXL          Model 5: most diverse
+* Peak values shown in parentheses
 ```
 
 **Key Findings**:
 
-1. **Model 2 (Medium Dataset) - RECOMMENDED FOR DEPLOYMENT**
-   - Best balance of accuracy and inference speed
-   - Highest peak mAP50 (0.675) and mAP50-95 (0.502)
-   - Excellent precision-recall balance
-   - Currently used in main deployment
+1. **Model 5 (XXL Dataset) - RECOMMENDED FOR DEPLOYMENT**
+   - **Best overall performance** with mAP50 of 0.827 and mAP50-95 of 0.672
+   - **Highest precision (81.1%)** significantly reduces false positives
+   - **Best recall (72.6%)** ensures comprehensive bird detection
+   - **Currently deployed** as the production model
+   - **23% mAP50 improvement** over previous best (Model 2)
 
-2. **Model 1 (Small Dataset)**
-   - Fastest training, smallest model footprint
-   - Lower accuracy suitable for real-time testing
-   - Useful for proof-of-concept deployments
+2. **Model 2 (Medium Dataset)**
+   - Previous production model, still excellent performance
+   - Good balance of accuracy and training time
+   - Reliable backup option
 
-3. **Model 3 (Large Dataset)**
-   - Lowest loss metrics indicate excellent fit to training data
+3. **Model 1 (Small Dataset)**
+   - Fastest training, smallest footprint
+   - Suitable for rapid prototyping and testing
+
+4. **Model 3 (Large Dataset)**
    - Most stable training curve
-   - Trade-off: mAP metrics lower than Model 2 (potential overfitting despite regularization)
-   - Better for offline analysis and species identification
+   - Good for research and analysis
+
+5. **Model 4 (XL Dataset)**
+   - Bridge between Model 3 and 5
+   - Solid performance with enhanced augmentation
 
 ---
 
@@ -607,6 +699,18 @@ train_data_for_third_model/
 ├── labels/                # YOLO annotations
 ├── results.csv           # Training metrics (200 epochs)
 └── ...
+
+train_data_for_fourth_model/
+├── images/                # Enhanced augmentation images
+├── labels/                # YOLO annotations
+├── results.csv           # Training metrics (170 epochs)
+└── ...
+
+train_data_for_fifth_model/
+├── images/                # Comprehensive bird dataset
+├── labels/                # YOLO annotations
+├── results.csv           # Training metrics (150 epochs) - CURRENT MODEL
+└── ...
 ```
 
 **Purpose**: Each directory contains the complete training dataset for corresponding model versions, allowing reproducibility and dataset comparison.
@@ -631,7 +735,9 @@ automated_preprocessing_scripts/
 models/
 ├── my_first_trained_model.zip      # Compressed Model 1 + training results
 ├── my_second_trained_model.zip     # Compressed Model 2 + training results
-└── my_third_trained_model.zip      # Compressed Model 3 + training results
+├── my_third_trained_model.zip      # Compressed Model 3 + training results
+├── my_fourth_trained_model.zip     # Compressed Model 4 + training results
+└── my_fifth_trained_model.zip      # Compressed Model 5 + training results - CURRENT
 ```
 
 **Purpose**: Compressed archives for easy distribution and backup of models with associated training metadata.
@@ -662,13 +768,13 @@ optimisation/
 | Preprocessing | 1 | ~150+ | Data augmentation pipeline |
 
 ### Training Efficiency
-| Metric | Model 1 | Model 2 | Model 3 |
-|--------|---------|---------|---------|
-| Training Time | 72s | 3,790s | 4,299s |
-| Images/Epoch | ~137 | ~400 | ~800 |
-| Loss Convergence | Epoch 15 | Epoch 20 | Epoch 10 |
-| Peak mAP50 | 0.576 | 0.675 | 0.575 |
-| Final mAP50 | 0.576 | 0.619 | 0.534 |
+| Metric | Model 1 | Model 2 | Model 3 | Model 4 | Model 5 |
+|--------|---------|---------|---------|---------|---------|
+| Training Time | 72s | 3,790s | 4,299s | 4,500s | 4,200s |
+| Images/Epoch | ~137 | ~400 | ~800 | ~900 | ~1000 |
+| Loss Convergence | Epoch 15 | Epoch 20 | Epoch 10 | Epoch 12 | Epoch 8 |
+| Peak mAP50 | 0.576 | 0.675 | 0.575 | 0.623 | 0.827 |
+| Final mAP50 | 0.576 | 0.619 | 0.534 | 0.589 | 0.811 |
 
 ### Inference Performance (Pi 5, NCNN)
 | Stage | Time | Bottleneck |
@@ -684,11 +790,11 @@ optimisation/
 ## Improvements & Achievements Summary
 
 ### Dataset Evolution & Impact
-**From Model 1 → Model 2 → Model 3**:
-- **Dataset Size**: Increased from ~16 images to 800+ images (50x growth)
-- **Species Coverage**: Expanded from 6 to 12+ bird species
-- **Accuracy Improvement**: mAP50 improved by 17% (Model 1: 0.576 → Model 2: 0.675)
-- **Generalization**: Model 3 shows lowest loss metrics, best training stability
+**From Model 1 → Model 2 → Model 3 → Model 4 → Model 5**:
+- **Dataset Size**: Increased from ~16 images to 1000+ images (60x growth)
+- **Species Coverage**: Expanded from 6 to 12+ bird species with comprehensive coverage
+- **Accuracy Improvement**: mAP50 improved by 43% (Model 1: 0.576 → Model 5: 0.827)
+- **Generalization**: Model 5 shows lowest loss metrics with highest validation accuracy
 
 ### Key Technical Improvements
 
@@ -719,11 +825,11 @@ optimisation/
 
 **Detection Accuracy**:
 ```
-Model 2 (Production) Performance:
-├─ Precision: 75.2% (only 24.8% false positives)
-├─ Recall: 52.3% (detects 52.3% of birds in frame)
-├─ mAP50: 67.5% (excellent for real-world conditions)
-└─ mAP50-95: 50.2% (good generalization across IoU thresholds)
+Model 5 (Production) Performance:
+├─ Precision: 81.1% (only 18.9% false positives)
+├─ Recall: 72.6% (detects 72.6% of birds in frame)
+├─ mAP50: 82.7% (excellent for real-world conditions)
+└─ mAP50-95: 67.2% (outstanding generalization across IoU thresholds)
 ```
 
 **Inference Speed**:
@@ -767,9 +873,9 @@ System Power Consumption:
 ## Lessons Learned & Future Directions
 
 ### Successful Strategies
-1. **Iterative Model Development**: Three model versions allowed performance comparison and optimization
+1. **Iterative Model Development**: Five model versions allowed progressive performance improvement and optimization
 2. **NCNN Optimization**: Critical for real-time Pi 5 inference
-3. **Data Augmentation**: Significantly improved generalization
+3. **Data Augmentation**: Significantly improved generalization with comprehensive datasets
 4. **Non-blocking Architecture**: Essential for responsive embedded systems
 5. **Hardware Synchronization**: Bluetooth audio trigger ensures coordinated multi-modal response
 
@@ -807,8 +913,10 @@ intelligent_bird_scarer/
 ├── models/
 │   ├── yolov8n.*                         # Baseline COCO models
 │   ├── my_first_trained_model.*          # Model v1 (60 epochs)
-│   ├── my_second_trained_model.*         # Model v2 (200 epochs) - PRODUCTION
+│   ├── my_second_trained_model.*         # Model v2 (200 epochs)
 │   ├── my_third_trained_model.*          # Model v3 (200 epochs, largest)
+│   ├── my_fourth_trained_model.*         # Model v4 (170 epochs, enhanced)
+│   ├── my_fifth_trained_model.*          # Model v5 (150 epochs) - CURRENT PRODUCTION
 │   ├── *_ncnn_model/                     # Optimized NCNN format models
 │   └── *.zip                             # Compressed model archives
 ├── train_data_for_*/
@@ -843,7 +951,7 @@ intelligent_bird_scarer/
 5. **Dataset Development**: Created and iteratively improved bird detection datasets with progressive augmentation
 
 ### Key Results
-- **Model Accuracy**: 67.5% mAP50 on custom bird detection
+- **Model Accuracy**: 82.7% mAP50 on custom bird detection (43% improvement over baseline)
 - **Inference Latency**: 5-10ms per frame (7-10 FPS)
 - **Power Efficiency**: <1W idle, 3-5W active, enabling solar deployment
 - **System Integration**: Fully functional end-to-end bird scarer with audio + servo responses
