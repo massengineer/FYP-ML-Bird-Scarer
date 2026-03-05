@@ -8,9 +8,10 @@ class MLBirdClassifier:
     ):
         # Load the model once to save memory
         self.model = YOLO(model_path, task="detect")
-        self.duck_id = 0  # ID for 'duck'
-        self.target_id = [1, 2]  # IDs for 'raven, sparrow'
-        # self.target_id = 14  # ID for 'bird' in COCO dataset
+        self.target_id = [
+            1,
+            2,
+        ]  # IDs for 'raven, sparrow' and ID for 'duck' is 0 but it is not a pest bird so it has not been added to the target_id list
 
     def scan_frame(self, frame):
         """Processes a frame and returns (is_bird, annotated_image)"""
