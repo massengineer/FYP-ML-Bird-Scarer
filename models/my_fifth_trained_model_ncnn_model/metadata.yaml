@@ -1,0 +1,19 @@
+description: Ultralytics my_fifth_trained_model model trained on /content/FYP-Intelligent-Bird-Scarer-4-2/data.yaml
+author: Ultralytics
+date: '2026-03-05T16:48:27.131796'
+version: 8.3.100
+license: AGPL-3.0 License (https://ultralytics.com/license)
+docs: https://docs.ultralytics.com
+stride: 32
+task: detect
+batch: 1
+imgsz:
+- 640
+- 640
+names:
+  0: duck
+  1: raven
+  2: sparrow
+args:
+  batch: 1
+  half: true

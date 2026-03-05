@@ -4,7 +4,7 @@ from ultralytics import YOLO
 class MLBirdClassifier:
     def __init__(
         self,
-        model_path="/home/dys/pi/intelligent_bird_scarer/models/my_third_trained_model_ncnn_model",
+        model_path="/home/dys/pi/intelligent_bird_scarer/models/my_fifth_trained_model_ncnn_model",
     ):
         # Load the model once to save memory
         self.model = YOLO(model_path, task="detect")
