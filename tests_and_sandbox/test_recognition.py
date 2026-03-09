@@ -50,6 +50,15 @@ while True:
         cv2.LINE_AA,
     )
 
+    results = model.predict(source=0, show=False)  # 0 for live camera
+    # Extract timing in milliseconds
+    inference_ms = results[0].speed["inference"]
+    preprocess_ms = results[0].speed["preprocess"]
+    postprocess_ms = results[0].speed["postprocess"]
+
+    total_latency = inference_ms + preprocess_ms + postprocess_ms
+    print(f"Total Latency: {total_latency:.2f} ms")
+
     # Display the resulting frame
     cv2.imshow("Camera", annotated_frame)
 
