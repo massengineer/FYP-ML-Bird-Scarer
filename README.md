@@ -1,4 +1,4 @@
-# Intelligent Bird Scarer - BEng Final Year Project
+# Multi-Modal Machine Learning-Driven Scarecrow using CNNs - BEng Final Year Project
 
 ## Project Overview
 
@@ -9,7 +9,7 @@ This project is an automated bird deterrent system that uses machine learning (Y
 - **Multi-modal Deterrent**: Audio (hawk screech via Bluetooth speaker) + servo-based physical deterrent
 - **PIR Motion Sensor Integration**: Reduces computational overhead by only processing frames when movement is detected
 - **Video Recording**: Automatically records when birds are detected, with 5-second post-roll buffer
-- **Hardware Optimization**: Uses NCNN format models for faster inference on edge devices
+- **Hardware Optimisation**: Uses NCNN format models for faster inference on edge devices
 - **Non-blocking Operations**: Asynchronous audio playback and Bluetooth connectivity management
 
 ---
@@ -18,17 +18,17 @@ This project is an automated bird deterrent system that uses machine learning (Y
 
 ### Hardware Components
 1. **Raspberry Pi 5** - Main processing unit
-2. **PiCamera2 Module** - Video capture at 1280x720 resolution
+2. **PiCamera3 Module** - Video capture at 1280x720 resolution
 3. **PIR Motion Sensor** (BCM4 GPIO pin) - Motion detection trigger
 4. **ESP32 Microcontroller** - Servo control via Bluetooth A2DP audio sink
-5. **MG90S Servo** - Physical deterrent (rapid back-and-forth motion)
+5. **MG995 Servo** - Physical deterrent (rapid back-and-forth motion)
 6. **Bluetooth Speaker** - Audio playback (hawk screech sounds)
-7. **Amplifier Circuit** - For servo power management
+7. **Amplifier Circuit** - For improved speaker signal
 
 ### Software Stack
 - **Python 3.11** - Main programming language
 - **Ultralytics YOLOv8** - Object detection framework
-- **NCNN** - Neural network inference library (edge device optimization)
+- **NCNN** - Neural network inference library (edge device optimisation)
 - **PyCamera2** - Raspberry Pi camera interface
 - **RPi.GPIO** - GPIO pin control
 - **PyTorch/TorchScript** - Model format support
@@ -54,14 +54,14 @@ GPIO.setup(BCM4, GPIO.IN)
 
 #### `CameraRecorder` Class
 **Responsibilities**:
-- Initializes the PiCamera2 module with 1280x720 RGB888 format
+- Initialises the PiCamera2 module with 1280x720 RGB888 format
 - Creates H264 video encoder with 10 Mbps bitrate
 - Manages video recording start/stop with timestamped filenames
 - Integrates the ML bird classifier for real-time inference
 - Outputs recordings to `/home/dys/pi/recordings/`
 
 **Key Methods**:
-- `__init__()`: Sets up camera configuration, starts continuous preview, initializes ML classifier
+- `__init__()`: Sets up camera configuration, starts continuous preview, initialises ML classifier
 - `start_recording()`: Begins H264-encoded video capture with non-blocking encoding
 - `stop_recording()`: Stops recording and resumes camera stream for AI processing
 
@@ -123,15 +123,15 @@ GPIO.setup(BCM4, GPIO.IN)
 **Key Components**:
 
 #### `MLBirdClassifier` Class
-**Initialization**:
+**Initialisation**:
 ```python
 def __init__(self, model_path="/home/dys/pi/intelligent_bird_scarer/models/yolov8n_ncnn_model"):
     self.model = YOLO(model_path, task="detect")
     self.target_id = 14  # ID for 'bird' class in COCO dataset
 ```
 - Loads pre-trained YOLO model in detection mode
-- Uses NCNN format for optimized Pi 5 inference
-- Targets COCO class 14 (bird) for broad bird detection or custom models
+- Uses NCNN format for optimised Pi 5 inference
+- Targets COCO class 14 (bird) for broad bird detection or custom models in this example, but now the new source code does it for other labels
 
 #### `scan_frame(frame)` Method
 **Purpose**: Process a single camera frame and detect birds
@@ -146,10 +146,10 @@ def __init__(self, model_path="/home/dys/pi/intelligent_bird_scarer/models/yolov
 
 **Output**:
 - `is_bird`: Boolean flag indicating bird presence
-- `annotated_frame`: Visualization with bounding boxes and labels (for debugging/recording)
+- `annotated_frame`: Visualisation with bounding boxes and labels (for debugging/recording)
 
 **Performance Characteristics**:
-- NCNN inference: ~5-10ms per frame on Pi 5
+- NCNN inference: ~5-10ms per frame on Google Colab and ~10x slower on Pi 5 with current setup
 - Stream processing prevents memory bloat
 - Verbose=False suppresses console output for cleaner logging
 
@@ -202,7 +202,7 @@ def __init__(self, model_path="/home/dys/pi/intelligent_bird_scarer/models/yolov
 
 ### 4. **`optimisation/ncnn_conversion.py`** - Model Format Conversion
 
-**Purpose**: Convert standard YOLOv8 PyTorch models to NCNN format for edge device optimization.
+**Purpose**: Convert standard YOLOv8 PyTorch models to NCNN format for edge device optimisation.
 
 **NCNN Advantages**:
 - Significantly faster inference on CPU-based edge devices
@@ -236,7 +236,7 @@ model.export(format="ncnn", imgsz=640, half=True)
 
 **Output**: `my_first_trained_model_ncnn_model/` with:
 - `model.ncnn.param` - Model architecture definition
-- `model.ncnn.bin` - Quantized model weights
+- `model.ncnn.bin` - Quantised model weights
 - `metadata.yaml` - Model metadata (input/output specs)
 - `model_ncnn.py` - PyTorch compatibility wrapper
 
@@ -268,7 +268,7 @@ Servo myservo;
 int servoPin = 4;
 myservo.setPeriodHertz(50); // Standard servo frequency
 ```
-- Standard MG90S servo requires 50Hz PWM signal
+- Standard MG995 servo requires 50Hz PWM signal
 - Attached to GPIO pin 4 on ESP32
 - Only attached when needed (to save power)
 
@@ -313,7 +313,7 @@ if (triggerServo) {
 
 ### 7. **`tests/test_recognition.py`** - Integration Testing
 
-**Purpose**: Standalone test script for validating bird detection on Picamera2 without full system integration.
+**Purpose**: Standalone test script for validating bird detection on PiCamera2 without full system integration.
 
 **Test Procedure**:
 1. Initializes PiCamera2 at 1280x1280 resolution
@@ -338,9 +338,9 @@ if (triggerServo) {
 ```yaml
 task: detect           # Object detection task
 model: yolov8n.pt     # Nano variant (fastest)
-epochs: 60            # Training iterations
+epochs: 200            # Training iterations
 batch: 16             # Samples per GPU iteration
-imgsz: 64             # Input image size (64x64)
+imgsz: 640             # Input image size (64x64)
 optimizer: auto       # Automatic optimizer selection
 amp: true             # Automatic Mixed Precision
 workers: 8            # Data loading threads
@@ -348,7 +348,7 @@ patience: 100         # Early stopping patience
 ```
 
 **Customization Notes**:
-- Smaller `imgsz` (64) trains faster but may reduce accuracy
+- Smaller `imgsz` (640) trains faster but may reduce accuracy
 - Larger `batch` requires more GPU memory
 - `amp=true` reduces memory and speeds training
 - Can be manually edited before training or loaded from Colab notebook
@@ -400,7 +400,7 @@ train_data_for_first_model/     # Model 1 dataset (smallest)
 train_data_for_second_model/    # Model 2 dataset (medium)
 train_data_for_third_model/     # Model 3 dataset (large)
 train_data_for_fourth_model/    # Model 4 dataset (expanded)
-train_data_for_fifth_model/     # Model 5 dataset (largest, most diverse) - CURRENT
+train_data_for_fifth_model/     # Model 5 dataset (medium) - CURRENT
 ```
 
 ### Model 1: Initial Bird Detection Model
@@ -440,10 +440,10 @@ train_data_for_fifth_model/     # Model 5 dataset (largest, most diverse) - CURR
 
 **Training Configuration**:
 - **Epochs**: 200
-- **Image Size**: 64x64 pixels
+- **Image Size**: 640x640 pixels
 - **Batch Size**: 16 (larger GPU available)
 - **Training Time**: ~3790 seconds (~1 hour 3 minutes)
-- **Target Classes**: 6 bird species + additional training samples
+- **Target Classes**: 3 bird species
 - **Data Augmentation**: Enhanced with albumentations library
 
 **Performance Metrics**:
@@ -480,10 +480,10 @@ train_data_for_fifth_model/     # Model 5 dataset (largest, most diverse) - CURR
 
 **Training Configuration**:
 - **Epochs**: 200
-- **Image Size**: 64x64 pixels
+- **Image Size**: 640x640 pixels
 - **Batch Size**: 16
 - **Training Time**: ~4299 seconds (~1 hour 11 minutes)
-- **Target Classes**: 6+ bird species with maximum diversity
+- **Target Classes**: 3 bird species with maximum diversity
 - **Data Augmentation**: Full albumentations pipeline with species-specific augmentation
 
 **Performance Metrics**:
@@ -521,10 +521,10 @@ train_data_for_fifth_model/     # Model 5 dataset (largest, most diverse) - CURR
 
 **Training Configuration**:
 - **Epochs**: 170
-- **Image Size**: 64x64 pixels
-- **Batch Size**: 16
+- **Image Size**: 640x640 pixels
+- **Batch Size**: 32
 - **Training Time**: ~4,500 seconds (~1 hour 15 minutes)
-- **Target Classes**: 6+ bird species with enhanced augmentation
+- **Target Classes**: 3 bird species with enhanced augmentation
 - **Data Augmentation**: Advanced albumentations with geometric transformations
 
 **Performance Metrics**:
@@ -555,10 +555,10 @@ train_data_for_fifth_model/     # Model 5 dataset (largest, most diverse) - CURR
 
 **Training Configuration**:
 - **Epochs**: 150
-- **Image Size**: 64x64 pixels
-- **Batch Size**: 16
+- **Image Size**: 640x640 pixels
+- **Batch Size**: 32
 - **Training Time**: ~4,200 seconds (~1 hour 10 minutes)
-- **Target Classes**: 6+ bird species with maximum diversity
+- **Target Classes**: 3 bird species
 - **Data Augmentation**: Full pipeline with species-specific strategies
 - **Optimization**: Advanced training hyperparameters
 
@@ -604,13 +604,13 @@ mAP50:           0.576      0.619(675*)  0.534        0.589(623*)  0.811(827*) M
 mAP50-95:        0.362      0.487(502*)  0.409        0.456(487*)  0.651(672*) Model 5: +34% vs M2
 Box Loss:        1.239      0.479        0.335        0.312        0.299        Model 5: 76% reduction
 Training Time:   72s        3790s        4299s        4500s        4200s        Model 1: fastest
-Dataset Size:    Small      Medium       Large        XL           XXL          Model 5: most diverse
+Dataset Size:    Small      Medium       Large        XL           Medium          Model 5: most balanced
 * Peak values shown in parentheses
 ```
 
 **Key Findings**:
 
-1. **Model 5 (XXL Dataset) - RECOMMENDED FOR DEPLOYMENT**
+1. **Model 5 (Medium Dataset) - RECOMMENDED FOR DEPLOYMENT**
    - **Best overall performance** with mAP50 of 0.827 and mAP50-95 of 0.672
    - **Highest precision (81.1%)** significantly reduces false positives
    - **Best recall (72.6%)** ensures comprehensive bird detection
@@ -641,14 +641,14 @@ Dataset Size:    Small      Medium       Large        XL           XXL          
 **File**: `automated_preprocessing_scripts/updated_bird_preprocessing.py`
 
 **Functions**:
-- Automated image normalization (RGB standardization)
+- Automated image normalisation (RGB standardisation)
 - Species-specific augmentation strategies
 - Dataset balancing across bird species
-- Train/validation split (90/10)
-- YOLO format annotation conversion (`.txt` files with normalized coordinates)
+- Train/validation/test split (70/20/10%)
+- YOLO format annotation conversion (`.txt` files with normalised coordinates)
 
 **Key Features**:
-- Handles different image resolutions (normalizes to 64x64)
+- Handles different image resolutions (normalises to 640x640)
 - Preserves aspect ratios during augmentation
 - Generates class indices mapping
 
@@ -709,7 +709,7 @@ train_data_for_fourth_model/
 train_data_for_fifth_model/
 ├── images/                # Comprehensive bird dataset
 ├── labels/                # YOLO annotations
-├── results.csv           # Training metrics (150 epochs) - CURRENT MODEL
+├── results.csv           # Training metrics (150 epochs) - CURRENT DEPLOYED MODEL
 └── ...
 ```
 
@@ -722,7 +722,7 @@ automated_preprocessing_scripts/
 ```
 
 **Features**:
-- Automated image normalization and augmentation
+- Automated image normalisation and augmentation
 - Species-specific preprocessing strategies
 - YOLO format annotation generation
 - Dataset balancing across bird classes
@@ -742,7 +742,7 @@ models/
 
 **Purpose**: Compressed archives for easy distribution and backup of models with associated training metadata.
 
-### Optimization Scripts Summary
+### Optimisation Scripts Summary
 ```
 optimisation/
 ├── ncnn_conversion.py              # Convert COCO models to NCNN
@@ -752,20 +752,11 @@ optimisation/
 **Key Improvements in Conversion**:
 - FP16 precision reduces model size by ~50%
 - Inference speed improvement of 10-15x vs PyTorch
-- Zero significant accuracy loss for object detection
+- No significant accuracy loss for object detection
 
 ---
 
 ## Project Statistics & Metrics
-
-### Codebase Overview
-| Component | Files | LOC | Purpose |
-|-----------|-------|-----|---------|
-| Core Application | 2 | ~200 | Main system + bird classification |
-| Model Training | 1 | ~100+ | Jupyter notebook for training |
-| Optimization | 2 | ~20 | Model format conversion |
-| Testing | 1 | ~40 | Integration testing |
-| Preprocessing | 1 | ~150+ | Data augmentation pipeline |
 
 ### Training Efficiency
 | Metric | Model 1 | Model 2 | Model 3 | Model 4 | Model 5 |
@@ -776,7 +767,7 @@ optimisation/
 | Peak mAP50 | 0.576 | 0.675 | 0.575 | 0.623 | 0.827 |
 | Final mAP50 | 0.576 | 0.619 | 0.534 | 0.589 | 0.811 |
 
-### Inference Performance (Pi 5, NCNN)
+### Inference Performance (Google Colab, NCNN)
 | Stage | Time | Bottleneck |
 |-------|------|-----------|
 | Preprocessing | 0.3ms | Camera frame grab |
@@ -807,7 +798,7 @@ optimisation/
 #### 2. **Training Pipeline Enhancements**
 - ✅ Implemented automated data preprocessing and augmentation
 - ✅ Added species-specific augmentation strategies
-- ✅ Created train/validation split automation (90/10)
+- ✅ Created train/validation split automation (70/20/10)
 - ✅ Established consistent YOLO format annotation system
 
 #### 3. **Model Architecture Decisions**
@@ -829,7 +820,7 @@ Model 5 (Production) Performance:
 ├─ Precision: 81.1% (only 18.9% false positives)
 ├─ Recall: 72.6% (detects 72.6% of birds in frame)
 ├─ mAP50: 82.7% (excellent for real-world conditions)
-└─ mAP50-95: 67.2% (outstanding generalization across IoU thresholds)
+└─ mAP50-95: 67.2% (outstanding generalisation across IoU thresholds)
 ```
 
 **Inference Speed**:
@@ -854,8 +845,8 @@ System Power Consumption:
 ### Deployment Readiness
 
 ✅ **Production Deployment Status**:
-- [x] Model trained and validated (3 iterations)
-- [x] Format optimized for edge device (NCNN)
+- [x] Model trained and validated (6 iterations)
+- [x] Format optimised for edge device (NCNN)
 - [x] Integration tested with hardware (camera, GPIO, Bluetooth)
 - [x] Non-blocking async operations implemented
 - [x] Error handling and graceful degradation
@@ -873,11 +864,11 @@ System Power Consumption:
 ## Lessons Learned & Future Directions
 
 ### Successful Strategies
-1. **Iterative Model Development**: Five model versions allowed progressive performance improvement and optimization
-2. **NCNN Optimization**: Critical for real-time Pi 5 inference
-3. **Data Augmentation**: Significantly improved generalization with comprehensive datasets
+1. **Iterative Model Development**: Six model versions allowed progressive performance improvement and optimisation
+2. **NCNN Optimisation**: Critical for real-time Pi 5 inference
+3. **Data Augmentation**: Significantly improved generalisation with comprehensive datasets
 4. **Non-blocking Architecture**: Essential for responsive embedded systems
-5. **Hardware Synchronization**: Bluetooth audio trigger ensures coordinated multi-modal response
+5. **Hardware Synchronisation**: Bluetooth audio trigger ensures coordinated multi-modal response
 
 ### Challenges & Solutions
 | Challenge | Solution | Result |
@@ -885,18 +876,8 @@ System Power Consumption:
 | Model inference too slow on CPU | Converted to NCNN + FP16 | 10-15x speedup achieved |
 | Audio playback froze main loop | Used subprocess.Popen for async | Eliminated latency spikes |
 | Variable inference latency | Implemented PIR gating | 95% reduction in computation |
-| Servo control synchronization | Used Bluetooth audio callback | Perfectly synced deterrents |
+| Servo control synchronisation | Used Bluetooth audio callback | Perfectly synced deterrents |
 | Small training dataset | Progressive augmentation | 50x dataset growth |
-
-### Recommended Future Improvements
-1. **Model Quantization**: INT8 quantization for further 20% speedup
-2. **Multi-model Ensemble**: Combine 2-3 models for higher accuracy
-3. **Species Classification**: Add secondary classifier for bird species identification
-4. **Thermal Camera**: Night vision capability for 24/7 operation
-5. **Cloud Integration**: Remote monitoring and model updates
-6. **Web Dashboard**: Real-time visualization of detections
-7. **Transfer Learning**: Fine-tune on domain-specific bird datasets
-8. **Confidence Thresholding**: Adaptive thresholds based on bird class
 
 ---
 
@@ -946,8 +927,8 @@ intelligent_bird_scarer/
 ### Research Contributions
 1. **Practical Edge AI Implementation**: Deployed YOLOv8 object detection on Raspberry Pi 5 with real-time performance
 2. **Multi-modal Deterrent System**: Combined audio + mechanical deterrents triggered by ML detection
-3. **Hardware-Software Co-design**: Synchronized Bluetooth audio with ESP32 servo control
-4. **Optimization Methodology**: Demonstrated 10-15x inference speedup through NCNN + FP16 quantization
+3. **Hardware-Software Co-design**: Synchronised Bluetooth audio with ESP32 servo control
+4. **Optimisation Methodology**: Demonstrated 10-15x inference speedup through NCNN + FP16 quantisation
 5. **Dataset Development**: Created and iteratively improved bird detection datasets with progressive augmentation
 
 ### Key Results
@@ -955,14 +936,6 @@ intelligent_bird_scarer/
 - **Inference Latency**: 5-10ms per frame (7-10 FPS)
 - **Power Efficiency**: <1W idle, 3-5W active, enabling solar deployment
 - **System Integration**: Fully functional end-to-end bird scarer with audio + servo responses
-- **Code Quality**: ~500 lines of production Python, fully documented and reproducible
-
-### Academic Value
-- Demonstrates practical constraints of edge ML deployment
-- Shows importance of hardware optimization (NCNN, FP16)
-- Illustrates non-blocking async patterns for embedded systems
-- Provides reproducible training pipeline with results
-- Includes complete hardware-software integration documentation
 
 ---
 
@@ -983,9 +956,9 @@ intelligent_bird_scarer/
 
 ### System Startup
 ```
-1. Initialize GPIO (PIR sensor)
-2. Initialize PiCamera2 (video capture)
-3. Load YOLO model (NCNN optimized)
+1. Initialise GPIO (PIR sensor)
+2. Initialise PiCamera2 (video capture)
+3. Load YOLO model (NCNN optimised)
 4. Enter main event loop
 ```
 
@@ -1032,18 +1005,18 @@ intelligent_bird_scarer/
 ### 4. **5-Second Post-roll Buffer**
 - Avoids repeated start/stop cycles from intermittent motion
 - Reduces wear on mechanical components (servo, camera)
-- Provides footage of bird leaving for behavior analysis
+- Provides footage of bird leaving for behaviour analysis
 
 ### 5. **Bluetooth Audio Trigger**
 - Uses standard A2DP protocol (widely compatible)
-- Servo motion synchronized with audio playback
+- Servo motion synchronised with audio playback
 - Redundant deterrent (audio + visual) for maximum effectiveness
 
 ---
 
 ## Performance Metrics
 
-### Inference Speed (Pi 5, NCNN)
+### Inference Speed (Google Colab)
 - Preprocessing: ~0.3ms
 - YOLO inference: ~5-10ms (depending on scene complexity)
 - Postprocessing: ~2-5ms
@@ -1084,12 +1057,8 @@ intelligent_bird_scarer/
 
 ---
 
-## Future Improvements & Extensions
-
-1. **Model Quantization**: INT8 quantization for further speedup
-2. **Multi-model Ensemble**: Combine detection models for higher accuracy
-3. **Species-specific Responses**: Different audio for different birds
-4. **Cloud Logging**: Send detection events to cloud dashboard
-5. **Battery Management**: Solar charging system with monitoring
-6. **Web Dashboard**: Real-time monitoring interface
-7. **Thermal Camera Option**: Night vision bird detection
+## Recommended Future Improvements
+1. **Model Quantisation**: INT8 quantisation for further 20% speedup
+2. **Cloud Integration**: Remote monitoring and model updates
+3. **Transfer Learning**: Fine-tune on domain-specific bird datasets
+4. **Confidence Thresholding**: Adaptive thresholds based on bird class
