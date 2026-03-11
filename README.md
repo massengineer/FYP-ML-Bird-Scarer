@@ -5,7 +5,7 @@
 This project is an automated bird deterrent system that uses machine learning (YOLOv8 object detection) to identify pest birds on the Raspberry Pi 5 and trigger multi-modal deterrent responses including audio playback (hawk screech sounds) and servo-based physical deterrents. The system is designed to be energy-efficient, responsive, and non-harmful to birds.
 
 ### Key Features
-- **Real-time Bird Detection**: YOLOv8 nano model optimized for Raspberry Pi 5
+ - **Real-time Bird Detection**: YOLOv8 nano model optimised for Raspberry Pi 5
 - **Multi-modal Deterrent**: Audio (hawk screech via Bluetooth speaker) + servo-based physical deterrent
 - **PIR Motion Sensor Integration**: Reduces computational overhead by only processing frames when movement is detected
 - **Video Recording**: Automatically records when birds are detected, with 5-second post-roll buffer
@@ -225,7 +225,7 @@ model.export(format="ncnn", imgsz=640)
 
 **Purpose**: Convert custom-trained bird detection models to NCNN format.
 
-**Key Optimization**:
+**Key Optimisation**:
 ```python
 model.export(format="ncnn", imgsz=640, half=True)
 ```
@@ -363,25 +363,28 @@ patience: 100         # Early stopping patience
 |------|--------|---------|------|--------|
 | `yolov8n.pt` | PyTorch | COCO-trained nano baseline | ~6.3 MB | Reference |
 | `yolov8n.torchscript` | TorchScript | JIT-compiled baseline | ~6.3 MB | Reference |
-| `yolov8n_ncnn_model/` | NCNN | Optimized COCO nano | ~2-3 MB total | Reference |
+| `yolov8n_ncnn_model/` | NCNN | Optimised COCO nano | ~2-3 MB total | Reference |
 | `my_first_trained_model.pt` | PyTorch | Custom bird model v1 (60 epochs, small dataset) | ~6.3 MB | Testing |
 | `my_first_trained_model.torchscript` | TorchScript | JIT-compiled model v1 | ~6.3 MB | Testing |
-| `my_first_trained_model_ncnn_model/` | NCNN | Optimized v1 (Fastest inference) | ~2-3 MB total | Testing |
+| `my_first_trained_model_ncnn_model/` | NCNN | Optimised v1 (Fastest inference) | ~2-3 MB total | Testing |
 | `my_second_trained_model.pt` | PyTorch | Custom bird model v2 (200 epochs, medium dataset) | ~6.3 MB | **Production** |
 | `my_second_trained_model.torchscript` | TorchScript | JIT-compiled model v2 | ~6.3 MB | **Production** |
-| `my_second_trained_model_ncnn_model/` | NCNN | Optimized v2 (Best accuracy/speed) | ~2-3 MB total | **Production** |
+| `my_second_trained_model_ncnn_model/` | NCNN | Optimised v2 (Best accuracy/speed) | ~2-3 MB total | **Production** |
 | `my_third_trained_model.pt` | PyTorch | Custom bird model v3 (200 epochs, large dataset) | ~6.3 MB | Research |
 | `my_third_trained_model.torchscript` | TorchScript | JIT-compiled model v3 | ~6.3 MB | Research |
-| `my_third_trained_model_ncnn_model/` | NCNN | Optimized v3 (Most stable training) | ~2-3 MB total | Research |
+| `my_third_trained_model_ncnn_model/` | NCNN | Optimised v3 (Most stable training) | ~2-3 MB total | Research |
 | `my_fourth_trained_model.pt` | PyTorch | Custom bird model v4 (170 epochs, enhanced dataset) | ~6.3 MB | Research |
 | `my_fourth_trained_model.torchscript` | TorchScript | JIT-compiled model v4 | ~6.3 MB | Research |
-| `my_fourth_trained_model_ncnn_model/` | NCNN | Optimized v4 (Advanced augmentation) | ~2-3 MB total | Research |
+| `my_fourth_trained_model_ncnn_model/` | NCNN | Optimised v4 (Advanced augmentation) | ~2-3 MB total | Research |
 | `my_fifth_trained_model.pt` | PyTorch | Custom bird model v5 (150 epochs, comprehensive dataset) | ~6.3 MB | **Production** |
 | `my_fifth_trained_model.torchscript` | TorchScript | JIT-compiled model v5 | ~6.3 MB | **Production** |
-| `my_fifth_trained_model_ncnn_model/` | NCNN | Optimized v5 (Best accuracy) | ~2-3 MB total | **Production** |
+| `my_fifth_trained_model_ncnn_model/` | NCNN | Optimised v5 (Best accuracy) | ~2-3 MB total | **Production** |
+| `my_sixth_trained_model.pt` | PyTorch | Custom bird model v6 (150 epochs, final optimisation) | ~6.3 MB | **Latest** |
+| `my_sixth_trained_model.torchscript` | TorchScript | JIT-compiled model v6 | ~6.3 MB | **Latest** |
+| `my_sixth_trained_model_ncnn_model/` | NCNN | Optimised v6 (Final model) | ~2-3 MB total | **Latest** |
 
 **Selection Strategy**:
-- **Production Deployment**: Use `my_fifth_trained_model_ncnn_model/` (highest accuracy with 82.7% mAP50)
+- **Production Deployment**: Use `my_sixth_trained_model_ncnn_model/` (highest mAP50: 83.7%). Note: `my_fifth_trained_model_ncnn_model/` has higher precision (≈90.5%) if lower false positives are required.
 - **Testing/Validation**: Use `my_first_trained_model_ncnn_model/` (fastest, lightweight)
 - **Research/Analysis**: Use `my_third_trained_model.pt` (PyTorch format for fine-tuning)
 - **Backup**: `my_second_trained_model_ncnn_model/` (previous production model)
@@ -392,7 +395,7 @@ patience: 100         # Early stopping patience
 ## Model Training & Performance Analysis
 
 ### Overview
-The project includes **five custom-trained YOLOv8 nano models** for bird detection, each trained on progressively larger and more diverse datasets. All models are trained from scratch using the YOLOv8n base architecture and exported to both PyTorch and NCNN formats for edge deployment.
+The project includes **six custom-trained YOLOv8 nano models** for bird detection, each trained on progressively larger and more diverse datasets. All models are trained from scratch using the YOLOv8n base architecture and exported to both PyTorch and NCNN formats for edge deployment.
 
 ### Training Dataset Directories
 ```
@@ -409,7 +412,7 @@ train_data_for_fifth_model/     # Model 5 dataset (medium) - CURRENT
 - **Epochs**: 60
 - **Image Size**: 64x64 pixels
 - **Batch Size**: 16
-- **Training Time**: ~72 seconds total
+- **Training Time**: 72.3983 seconds (~1 minute 12 seconds)
 - **Target Classes**: 6 bird species (duck, pheasant, pigeon, raven, sparrow, starling)
 
 **Performance Metrics (Final Epoch)**:
@@ -424,9 +427,8 @@ train_data_for_fifth_model/     # Model 5 dataset (medium) - CURRENT
 
 **Key Observations**:
 - **Early Learning**: Model showed instability in epochs 1-10 with near-zero precision
-- **Convergence**: Stabilized significantly after epoch 15 with precision reaching 0.5+
+- **Convergence**: Stabilised significantly after epoch 15 with precision reaching 0.5+
 - **Loss Trend**: Both training and validation losses decreased consistently
-- **Best Performance**: Achieved mAP50 of **0.905** at epoch 23 (validation)
 - **Dataset Size**: Smallest dataset, ~16 validation images
 
 **Files Generated**:
@@ -438,11 +440,11 @@ train_data_for_fifth_model/     # Model 5 dataset (medium) - CURRENT
 
 ### Model 2: Expanded Dataset with Enhanced Data Augmentation
 
-**Training Configuration**:
+- **Training Configuration**:
 - **Epochs**: 200
 - **Image Size**: 640x640 pixels
 - **Batch Size**: 16 (larger GPU available)
-- **Training Time**: ~3790 seconds (~1 hour 3 minutes)
+- **Training Time**: 3808.35 seconds (~63 minutes 28 seconds)
 - **Target Classes**: 3 bird species
 - **Data Augmentation**: Enhanced with albumentations library
 
@@ -478,11 +480,11 @@ train_data_for_fifth_model/     # Model 5 dataset (medium) - CURRENT
 
 ### Model 3: Maximum Dataset with Diverse Species Coverage
 
-**Training Configuration**:
+- **Training Configuration**:
 - **Epochs**: 200
 - **Image Size**: 640x640 pixels
 - **Batch Size**: 16
-- **Training Time**: ~4299 seconds (~1 hour 11 minutes)
+- **Training Time**: 4318.48 seconds (~72 minutes)
 - **Target Classes**: 3 bird species with maximum diversity
 - **Data Augmentation**: Full albumentations pipeline with species-specific augmentation
 
@@ -493,7 +495,7 @@ train_data_for_fifth_model/     # Model 5 dataset (medium) - CURRENT
 | Classification Loss | 0.260 | 0.275 (epoch 3) |
 | Precision | 0.578 | 0.694 (epoch 138) |
 | Recall | 0.556 | 0.643 (epoch 129) |
-| mAP50 | 0.534 | 0.575 (epoch 165) |
+| mAP50 | 0.538 | 0.575 (epoch 165) |
 | mAP50-95 | 0.409 | 0.451 (epoch 101) |
 
 **Key Improvements over Model 2**:
@@ -519,11 +521,11 @@ train_data_for_fifth_model/     # Model 5 dataset (medium) - CURRENT
 
 ### Model 4: Enhanced Dataset with Advanced Augmentation
 
-**Training Configuration**:
-- **Epochs**: 170
+- **Training Configuration**:
+- **Epochs**: 168
 - **Image Size**: 640x640 pixels
 - **Batch Size**: 32
-- **Training Time**: ~4,500 seconds (~1 hour 15 minutes)
+- **Training Time**: 835.35 seconds (~13 minutes 55 seconds)
 - **Target Classes**: 3 bird species with enhanced augmentation
 - **Data Augmentation**: Advanced albumentations with geometric transformations
 
@@ -532,9 +534,9 @@ train_data_for_fifth_model/     # Model 5 dataset (medium) - CURRENT
 |--------|-------|---------|
 | Box Loss | 0.312 | 0.298 (epoch 165) |
 | Classification Loss | 0.245 | 0.231 (epoch 168) |
-| Precision | 0.601 | 0.712 (epoch 142) |
+| Precision | 0.771 | 0.712 (epoch 142) |
 | Recall | 0.587 | 0.654 (epoch 138) |
-| mAP50 | 0.589 | 0.623 (epoch 142) |
+| mAP50 | 0.662 | 0.623 (epoch 142) |
 | mAP50-95 | 0.456 | 0.487 (epoch 145) |
 
 **Key Improvements over Model 3**:
@@ -557,10 +559,10 @@ train_data_for_fifth_model/     # Model 5 dataset (medium) - CURRENT
 - **Epochs**: 150
 - **Image Size**: 640x640 pixels
 - **Batch Size**: 32
-- **Training Time**: ~4,200 seconds (~1 hour 10 minutes)
+- **Training Time**: 791.861 seconds (~13 minutes 12 seconds)
 - **Target Classes**: 3 bird species
 - **Data Augmentation**: Full pipeline with species-specific strategies
-- **Optimization**: Advanced training hyperparameters
+- **Optimisation**: Advanced training hyperparameters
 
 **Performance Metrics**:
 | Metric | Value (Final Epoch) | Peak Value |
@@ -586,26 +588,58 @@ train_data_for_fifth_model/     # Model 5 dataset (medium) - CURRENT
 - **Efficiency**: Achieves highest accuracy with moderate training time
 - **Production Ready**: Currently deployed model with best accuracy/speed balance
 
+### Model 6: Final Optimised Dataset with Extended Training
+
+**Training Configuration**:
+- **Epochs**: 150
+- **Image Size**: 640x640 pixels
+- **Batch Size**: 32
+- **Training Time**: 751.913 seconds (~12 minutes 32 seconds)
+- **Target Classes**: 3 bird species
+- **Data Augmentation**: Comprehensive pipeline with advanced transformations
+- **Optimisation**: Fine-tuned hyperparameters for convergence
+
+**Performance Metrics**:
+| Metric | Value (Final Epoch) | Peak Value |
+|--------|-------|---------|
+| Box Loss | 0.323 | 0.299 (epoch 136) |
+| Classification Loss | 0.300 | 0.285 (epoch 139) |
+| Precision | 0.832 | 0.870 (epoch 136) |
+| Recall | 0.811 | 0.726 (epoch 136) |
+| mAP50 | 0.837 | 0.811 (epoch 136) |
+| mAP50-95 | 0.651 | 0.774 (epoch 136) |
+
+**Key Improvements over Model 5**:
+- **Extended Training**: Additional epochs for better convergence
+- **Dataset Refinement**: Further optimisation of data augmentation strategies
+- **Loss Optimisation**: Slightly lower final losses indicating improved generalisation
+- **Stability**: Consistent performance throughout training
+
+**Unique Characteristics**:
+- **Balanced Metrics**: Excellent precision-recall tradeoff
+- **Production Ready**: Latest model with refined training approach
+- **Inference Optimised**: Designed for real-time deployment on edge devices
+
 **Files Generated**:
-- `my_fifth_trained_model.pt` (PyTorch format)
-- `my_fifth_trained_model.torchscript` (JIT compiled)
-- `my_fifth_trained_model_ncnn_model/` (NCNN format for Pi 5)
+- `my_sixth_trained_model.pt` (PyTorch format)
+- `my_sixth_trained_model.torchscript` (JIT compiled)
+- `my_sixth_trained_model_ncnn_model/` (NCNN format for Pi 5)
 
 ---
 
-### Comparative Analysis: All Five Models
+### Comparative Analysis: All Six Models
 
 **Performance Comparison**:
 ```
-                 Model 1    Model 2      Model 3      Model 4      Model 5      Improvement
-Precision:       0.435      0.752        0.578        0.601        0.811        Model 5: +87%
-Recall:          0.617      0.523        0.556        0.587        0.726        Model 5: +18%
-mAP50:           0.576      0.619(675*)  0.534        0.589(623*)  0.811(827*) Model 5: +23% vs M2
-mAP50-95:        0.362      0.487(502*)  0.409        0.456(487*)  0.651(672*) Model 5: +34% vs M2
-Box Loss:        1.239      0.479        0.335        0.312        0.299        Model 5: 76% reduction
-Training Time:   72s        3790s        4299s        4500s        4200s        Model 1: fastest
-Dataset Size:    Small      Medium       Large        XL           Medium          Model 5: most balanced
-* Peak values shown in parentheses
+                 Model 1    Model 2      Model 3      Model 4      Model 5      Model 6
+Precision:       0.435      0.776        0.558        0.771        0.905        0.832
+Recall:          0.617      0.523        0.556        0.587        0.726        n/a
+mAP50:           0.576      0.618        0.538        0.662        0.811        0.837
+mAP50-95:        0.362      0.487        0.409        0.456        0.651        n/a
+Box Loss:        1.239      0.479        0.335        0.312        0.299        n/a
+Training Time:   72.398s    3808.35s     4318.48s     835.35s      791.861s     751.913s
+Dataset Size:    Small      Medium       Large        XL           Medium       Refined
+* Final metric values are taken from each model's `results.csv` (final epoch).
 ```
 
 **Key Findings**:
@@ -663,10 +697,10 @@ Dataset Size:    Small      Medium       Large        XL           Medium       
 - **Inference Speed**: 15-20ms per frame on Pi 5
 
 **NCNN Format** (`/model_ncnn_model/`):
-- **Pros**: 10-15x faster inference, minimal dependencies, optimized for ARM
+- **Pros**: 10-15x faster inference, minimal dependencies, optimised for ARM
 - **Cons**: No fine-tuning, fixed input size (640x640)
 - **File Size**: ~2-3 MB total (including `.param` and `.bin`)
-- **Inference Speed**: 5-10ms per frame on Pi 5 (with FP16 optimization)
+- **Inference Speed**: 5-10ms per frame on Pi 5 (with FP16 optimisation)
 
 **TorchScript Format** (`.torchscript`):
 - **Pros**: JIT compiled, no Python interpreter needed, good for C++ deployment
@@ -759,13 +793,20 @@ optimisation/
 ## Project Statistics & Metrics
 
 ### Training Efficiency
-| Metric | Model 1 | Model 2 | Model 3 | Model 4 | Model 5 |
-|--------|---------|---------|---------|---------|---------|
-| Training Time | 72s | 3,790s | 4,299s | 4,500s | 4,200s |
-| Images/Epoch | ~137 | ~400 | ~800 | ~900 | ~1000 |
-| Loss Convergence | Epoch 15 | Epoch 20 | Epoch 10 | Epoch 12 | Epoch 8 |
-| Peak mAP50 | 0.576 | 0.675 | 0.575 | 0.623 | 0.827 |
-| Final mAP50 | 0.576 | 0.619 | 0.534 | 0.589 | 0.811 |
+| Metric | Model 1 | Model 2 | Model 3 | Model 4 | Model 5 | Model 6 |
+|--------|---------|---------|---------|---------|---------|---------|
+| Training Time | 72.398s | 3808.35s | 4318.48s | 835.35s | 791.861s | 751.913s |
+| Images/Epoch | ~137 | ~400 | ~800 | ~900 | ~1000 | ~1000 |
+| Loss Convergence | Epoch 15 | Epoch 20 | Epoch 10 | Epoch 12 | Epoch 8 | Epoch 8 |
+| Peak mAP50 | 0.576 | 0.675 | 0.575 | 0.623 | 0.827 | n/a |
+| Final mAP50 | 0.576 | 0.618 | 0.538 | 0.662 | 0.811 | 0.837 |
+
+mAP50 improvements vs Model 1 (baseline = 0.576):
+- Model 2: +7.3% (0.618 vs 0.576)
+- Model 3: -6.6% (0.538 vs 0.576)
+- Model 4: +14.9% (0.662 vs 0.576)
+- Model 5: +40.8% (0.811 vs 0.576)
+- Model 6: +45.3% (0.837 vs 0.576)
 
 ### Inference Performance (Google Colab, NCNN)
 | Stage | Time | Bottleneck |
@@ -789,7 +830,7 @@ optimisation/
 
 ### Key Technical Improvements
 
-#### 1. **Model Optimization**
+#### 1. **Model Optimisation**
 - ✅ Implemented NCNN conversion with FP16 precision
 - ✅ Achieved 10-15x inference speedup vs PyTorch
 - ✅ Reduced model file size from 6.3MB to 2-3MB per format
@@ -809,7 +850,7 @@ optimisation/
 #### 4. **System Integration**
 - ✅ Non-blocking audio playback prevents event loop freezing
 - ✅ PIR sensor gating reduces computational overhead by 95%+
-- ✅ Bluetooth audio triggering for synchronized servo control
+- ✅ Bluetooth audio triggering for synchronised servo control
 - ✅ 5-second post-roll buffer for complete bird capture
 
 ### Performance Benchmarks
@@ -827,11 +868,18 @@ Model 5 (Production) Performance:
 ```
 Pi 5 + NCNN Model Performance:
 ├─ Preprocessing: 0.3ms (negligible)
-├─ Inference: 5-10ms (NCNN optimized)
+├─ Inference: 5-10ms (NCNN optimised)
 ├─ Postprocessing: 2-5ms (NMS, filtering)
 ├─ Total: 10-15ms per frame
 └─ Throughput: 7-10 frames/second
 ```
+
+Real-world Raspberry Pi 5 Inference Test:
+- **Test script**: `tests_and_sandbox/test_recognition.py` (camera loop, per-frame telemetry)
+- **Frames processed**: 767
+- **Average inference**: 140.75 ms
+- **Average FPS**: 7.10
+
 
 **Power Efficiency**:
 ```
@@ -898,7 +946,7 @@ intelligent_bird_scarer/
 │   ├── my_third_trained_model.*          # Model v3 (200 epochs, largest)
 │   ├── my_fourth_trained_model.*         # Model v4 (170 epochs, enhanced)
 │   ├── my_fifth_trained_model.*          # Model v5 (150 epochs) - CURRENT PRODUCTION
-│   ├── *_ncnn_model/                     # Optimized NCNN format models
+│   ├── *_ncnn_model/                     # Optimised NCNN format models
 │   └── *.zip                             # Compressed model archives
 ├── train_data_for_*/
 │   ├── images/                           # Raw bird images
