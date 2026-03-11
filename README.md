@@ -808,7 +808,7 @@ mAP50 improvements vs Model 1 (baseline = 0.576):
 - Model 5: +40.8% (0.811 vs 0.576)
 - Model 6: +45.3% (0.837 vs 0.576)
 
-### Inference Performance (Google Colab, NCNN)
+### Inference Performance (Google Colab)
 | Stage | Time | Bottleneck |
 |-------|------|-----------|
 | Preprocessing | 0.3ms | Camera frame grab |
@@ -866,9 +866,9 @@ Model 5 (Production) Performance:
 
 **Inference Speed**:
 ```
-Pi 5 + NCNN Model Performance:
+Google Colab Model Performance:
 ├─ Preprocessing: 0.3ms (negligible)
-├─ Inference: 5-10ms (NCNN optimised)
+├─ Inference: 5-10ms
 ├─ Postprocessing: 2-5ms (NMS, filtering)
 ├─ Total: 10-15ms per frame
 └─ Throughput: 7-10 frames/second
@@ -893,7 +893,7 @@ System Power Consumption:
 ### Deployment Readiness
 
 ✅ **Production Deployment Status**:
-- [x] Model trained and validated (6 iterations)
+- [-] Model trained and validated (6 iterations)
 - [x] Format optimised for edge device (NCNN)
 - [x] Integration tested with hardware (camera, GPIO, Bluetooth)
 - [x] Non-blocking async operations implemented
@@ -935,37 +935,42 @@ System Power Consumption:
 intelligent_bird_scarer/
 ├── README.md                              # This file
 ├── src/
-│   ├── main.py                           # Core application (CameraRecorder, event loop)
-│   ├── bird_recognition.py               # ML inference (MLBirdClassifier)
+│   ├── main.py                            # Core application (CameraRecorder, event loop)
+│   ├── bird_recognition.py                # ML inference (MLBirdClassifier)
 │   └── esp32/
 │       └── hawk_screech_and_servo_scarer.ino  # ESP32 firmware
 ├── models/
-│   ├── yolov8n.*                         # Baseline COCO models
-│   ├── my_first_trained_model.*          # Model v1 (60 epochs)
-│   ├── my_second_trained_model.*         # Model v2 (200 epochs)
-│   ├── my_third_trained_model.*          # Model v3 (200 epochs, largest)
-│   ├── my_fourth_trained_model.*         # Model v4 (170 epochs, enhanced)
-│   ├── my_fifth_trained_model.*          # Model v5 (150 epochs) - CURRENT PRODUCTION
-│   ├── *_ncnn_model/                     # Optimised NCNN format models
-│   └── *.zip                             # Compressed model archives
-├── train_data_for_*/
-│   ├── images/                           # Raw bird images
-│   ├── labels/                           # YOLO format annotations
-│   └── results.csv                       # Training metrics
+│   ├── yolov8n.pt                         # Baseline COCO PyTorch model
+│   ├── yolov8n.torchscript                # Baseline TorchScript model
+│   ├── yolov8n_ncnn_model/                # Baseline NCNN model
+│   ├── my_first_trained_model.*           # Model v1 (PyTorch/TorchScript/NCNN/zip)
+│   ├── my_second_trained_model.*          # Model v2 (PyTorch/TorchScript/NCNN/zip)
+│   ├── my_third_trained_model.*           # Model v3 (PyTorch/TorchScript/NCNN/zip)
+│   ├── my_fourth_trained_model.*          # Model v4 (PyTorch/zip)
+│   ├── my_fifth_trained_model.*           # Model v5 (PyTorch/TorchScript/NCNN/zip)
+│   └── my_sixth_trained_model.*           # Model v6 (PyTorch/zip)
+├── train_data_for_first_model/            # Dataset & training artefacts for Model 1
+├── train_data_for_second_model/           # Dataset & training artefacts for Model 2
+├── train_data_for_third_model/            # Dataset & training artefacts for Model 3
+├── train_data_for_fourth_model/           # Dataset & training artefacts for Model 4
+├── train_data_for_fifth_model/            # Dataset & training artefacts for Model 5
+├── train_data_for_sixth_model/            # Dataset & training artefacts for Model 6
 ├── notebooks/
-│   └── FYP_YOLO_Model_Training.ipynb    # Complete training pipeline
+│   └── FYP_YOLO_Model_Training.ipynb      # Training notebooks used during development
 ├── optimisation/
-│   ├── ncnn_conversion.py               # COCO to NCNN conversion
-│   └── ncnn_conversion_custom_models.py # Custom to NCNN (FP16)
+│   ├── ncnn_conversion.py                 # COCO to NCNN conversion
+│   └── ncnn_conversion_custom_models.py   # Custom to NCNN (FP16)
 ├── automated_preprocessing_scripts/
-│   └── updated_bird_preprocessing.py    # Data augmentation pipeline
-├── tests/
-│   └── test_recognition.py              # Integration testing
+│   └── get_images_and_preprocess.py       # Data collection & preprocessing helper
+├── tests_and_sandbox/
+│   ├── test_inference.py                  # Single-image inference timing
+│   ├── test_recognition.py                # Camera loop telemetry (per-frame timings)
+│   ├── find_yolo_classes_used_in_trained_model.py
++│   └── load_env_var_test.py
 ├── audio_samples/
-│   └── *.wav                            # Hawk screech audio files
-├── yolo_bird_recognition/               # Python venv with dependencies
-└── train/
-    └── args.yaml                        # Training hyperparameters
+│   └── *.wav                              # Hawk screech audio files (if present)
+├── yolo_bird_recognition/                 # Python virtual environment for experiments
+└── models_archives/                       # (optional) compressed model archives (zip)
 ```
 
 ---
