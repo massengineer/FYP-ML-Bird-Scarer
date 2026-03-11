@@ -893,7 +893,7 @@ System Power Consumption:
 ### Deployment Readiness
 
 ✅ **Production Deployment Status**:
-- [-] Model trained and validated (6 iterations)
+- [x] Model trained and validated (6 iterations)
 - [x] Format optimised for edge device (NCNN)
 - [x] Integration tested with hardware (camera, GPIO, Bluetooth)
 - [x] Non-blocking async operations implemented
@@ -966,7 +966,7 @@ intelligent_bird_scarer/
 │   ├── test_inference.py                  # Single-image inference timing
 │   ├── test_recognition.py                # Camera loop telemetry (per-frame timings)
 │   ├── find_yolo_classes_used_in_trained_model.py
-+│   └── load_env_var_test.py
+│   └── load_env_var_test.py
 ├── audio_samples/
 │   └── *.wav                              # Hawk screech audio files (if present)
 ├── yolo_bird_recognition/                 # Python virtual environment for experiments
