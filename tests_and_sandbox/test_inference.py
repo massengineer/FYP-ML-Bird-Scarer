@@ -2,14 +2,14 @@ from ultralytics import YOLO
 
 # Load model (Explicitly define task to remove the Warning)
 model = YOLO(
-    "/home/dys/pi/intelligent_bird_scarer/models/my_fifth_trained_model_ncnn_model",
+    "/home/dys/pi/FYP-ML-Bird-Scarer/models/my_fifth_trained_model_ncnn_model",
     task="detect",
 )
 
 # Use an image file instead of the camera (source=0)
 # Use one of your validation images to get a real-world result
 results = model.predict(
-    source="/home/dys/pi/intelligent_bird_scarer/fifth_model_validation_images/images/0be64d0484da7f5d_jpg.rf.04b6d1586df6ac3ba64640923855f992.jpg",
+    source="/home/dys/pi/FYP-ML-Bird-Scarer/fifth_model_validation_images/images/0be64d0484da7f5d_jpg.rf.04b6d1586df6ac3ba64640923855f992.jpg",
     imgsz=640,
     half=True,
 )

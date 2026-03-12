@@ -113,7 +113,7 @@ def main():
                     if (now - last_audio_time) > audio_cooldown:
                         if is_bluetooth_connected():
                             play_hawk_screech(
-                                "/home/dys/pi/intelligent_bird_scarer/audio_samples/528625__justinamolsch__hawk-screech.wav"
+                                "/home/dys/pi/FYP-ML-Bird-Scarer/audio_samples/528625__justinamolsch__hawk-screech.wav"
                             )
                             last_audio_time = now
                         else:

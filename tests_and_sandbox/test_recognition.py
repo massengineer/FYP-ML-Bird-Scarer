@@ -21,9 +21,7 @@ picam2.start()
 picam2.set_controls({"AfMode": controls.AfModeEnum.Continuous})
 
 # Load YOLOv8
-model = YOLO(
-    "/home/dys/pi/intelligent_bird_scarer/models/my_fifth_trained_model_ncnn_model"
-)
+model = YOLO("/home/dys/pi/FYP-ML-Bird-Scarer/models/my_fifth_trained_model_ncnn_model")
 
 print("System Active. Press 'q' or 'Ctrl+C' to stop and see results.")
 
