@@ -1,4 +1,4 @@
-# Multi-Modal Machine Learning-Driven Scarecrow using CNNs - BEng Final Year Project
+# Solar IoT Scarecrow: CNN Recognition with Multi-Modal Scaring Techniques
 
 ## Project Overview
 
