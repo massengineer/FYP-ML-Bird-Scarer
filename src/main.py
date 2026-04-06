@@ -105,27 +105,53 @@ def main():
 
                 # 3. AI Scan (Does not affect the recording duration)
                 frame = recorder.picam2.capture_array()
-                # UNPACKING: This ensures is_bird is a boolean, not a tuple
-                is_bird, _ = recorder.classifier.scan_frame(frame)
+                # UNPACKING: (is_bird: bool, annotated_frame, target_flags: list[bool])
+                is_bird, annotated_frame, target_flags = recorder.classifier.scan_frame(
+                    frame
+                )
 
+                # Prioritise raven (index 0) over sparrow (index 1).
                 if is_bird:
-                    # Handle Audio (Non-blocking)
-                    if (now - last_audio_time) > audio_cooldown:
-                        if is_bluetooth_connected():
-                            play_hawk_screech(
-                                "/home/dys/pi/FYP-ML-Bird-Scarer/audio_samples/528625__justinamolsch__hawk-screech.wav"
-                            )
-                            last_audio_time = now
-                        else:
-                            print("ESP32 missing! Reconnecting...")
-                            subprocess.Popen(
-                                [
-                                    "bluetoothctl",
-                                    "connect",
-                                    os.getenv("ESP32_MAC_ADDRESS"),
-                                ]
-                            )
+                    # Raven
+                    if target_flags and target_flags[0]:
+                        if (now - last_audio_time) > audio_cooldown:
+                            if is_bluetooth_connected():
+                                play_hawk_screech(
+                                    "/home/dys/pi/FYP-ML-Bird-Scarer/audio_samples/528625__justinamolsch__hawk-screech.wav"
+                                )
+                                last_audio_time = now
+                            else:
+                                print("ESP32 missing! Reconnecting...")
+                                subprocess.Popen(
+                                    [
+                                        "bluetoothctl",
+                                        "connect",
+                                        os.getenv("ESP32_MAC_ADDRESS"),
+                                    ]
+                                )
 
+                    # Sparrow (only if raven wasn't triggered)
+                    elif target_flags and len(target_flags) > 1 and target_flags[1]:
+                        if (now - last_audio_time) > audio_cooldown:
+                            if is_bluetooth_connected():
+                                play_hawk_screech(
+                                    "/home/dys/pi/FYP-ML-Bird-Scarer/audio_samples/chipingsparrow.wav"
+                                )
+                                last_audio_time = now
+                            else:
+                                print("ESP32 missing! Reconnecting...")
+                                subprocess.Popen(
+                                    [
+                                        "bluetoothctl",
+                                        "connect",
+                                        os.getenv("ESP32_MAC_ADDRESS"),
+                                    ]
+                                )
+
+                    else:
+                        print(
+                            "PIR High! Movement detected (Animal/Other), recording in progress..."
+                        )
                 else:
                     print(
                         "PIR High! Movement detected (Animal/Other), recording in progress..."
