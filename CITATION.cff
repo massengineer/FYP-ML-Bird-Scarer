@@ -4,14 +4,14 @@ title: "Solar IoT Scarecrow: CNN Recognition with Multi-Modal Scaring Techniques
 version: "0.1.0"
 date-released: 2026-04-09
 authors:
-	- family-names: "Massingham"
+  - family-names: "Massingham"
     given-names: "Louis"
-		affiliation: "BEng Mechatronic and Robotic Engineering Final Year Project, University of Birmingham"
-repository: "https://github.com/massengineer/FYP-ML-Bird-Scarer"
+    affiliation: "BEng Mechatronic and Robotic Engineering Final Year Project, University of Birmingham"
+repository-code: "https://github.com/massengineer/FYP-ML-Bird-Scarer"
 url: "https://github.com/massengineer/FYP-ML-Bird-Scarer"
 keywords:
-	- bird-deterrent
-	- yolov8n
-	- raspberry-pi
-	- ncnn
-	- computer-vision
+  - bird-deterrent
+  - yolov8n
+  - raspberry-pi
+  - ncnn
+  - computer-vision
