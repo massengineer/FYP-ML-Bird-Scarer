@@ -7,6 +7,8 @@ from picamera2 import Picamera2
 from picamera2.encoders import H264Encoder
 from libcamera import controls
 from bird_recognition import MLBirdClassifier
+import cv2
+import numpy as np
 
 # importing necessary functions from dotenv library
 from dotenv import load_dotenv
@@ -33,6 +35,8 @@ class CameraRecorder:
         self.picam2.set_controls({"AfMode": controls.AfModeEnum.Continuous})
 
         self.classifier = MLBirdClassifier()
+        # CLAHE to match preprocessing pipeline (applied to camera frames before inference)
+        self.clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
         self.recording = False
         self.output_dir = "/home/dys/pi/recordings"
         if not os.path.exists(self.output_dir):
@@ -105,9 +109,21 @@ def main():
 
                 # 3. AI Scan (Does not affect the recording duration)
                 frame = recorder.picam2.capture_array()
+                # Apply CLAHE preprocessing similar to preprocessing script
+                try:
+                    img = frame
+                    if img.dtype != np.uint8:
+                        img = (img * 255).astype(np.uint8)
+                    lab = cv2.cvtColor(img, cv2.COLOR_RGB2LAB)
+                    L, a, b = cv2.split(lab)
+                    L = recorder.clahe.apply(L)
+                    lab = cv2.merge((L, a, b))
+                    proc_frame = cv2.cvtColor(lab, cv2.COLOR_LAB2RGB)
+                except Exception:
+                    proc_frame = frame
                 # UNPACKING: (is_bird: bool, annotated_frame, target_flags: list[bool])
                 is_bird, annotated_frame, target_flags = recorder.classifier.scan_frame(
-                    frame
+                    proc_frame
                 )
 
                 # Prioritise raven (index 0) over sparrow (index 1).
