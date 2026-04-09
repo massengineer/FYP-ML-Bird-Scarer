@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software in a publication please cite it as below."
+title: "Solar IoT Scarecrow: CNN Recognition with Multi-Modal Scaring Techniques"
+version: "0.1.0"
+date-released: 2026-04-09
+authors:
+	- name: "massengineer"
+		affiliation: "BEng Mechatronic and Robotic Engineering Final Year Project, University of Birmingham"
+repository: "https://github.com/massengineer/FYP-ML-Bird-Scarer"
+url: "https://github.com/massengineer/FYP-ML-Bird-Scarer"
+keywords:
+	- bird-deterrent
+	- yolov8n
+	- raspberry-pi
+	- ncnn
+	- computer-vision
+"
