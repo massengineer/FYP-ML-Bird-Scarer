@@ -109,7 +109,7 @@ def main():
 
                 # 3. AI Scan (Does not affect the recording duration)
                 frame = recorder.picam2.capture_array()
-                # Apply CLAHE preprocessing similar to preprocessing script
+                # Apply CLAHE preprocessing to match training conditions (improves detection accuracy)
                 try:
                     img = frame
                     if img.dtype != np.uint8:
