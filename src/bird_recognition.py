@@ -41,7 +41,7 @@ class MLBirdClassifier:
                 conf = float(box.conf[0])
                 if cls_id in self.target_id and conf > 0.8:
                     is_bird = True
-                    # mark which target was found
+                    # Mark which target was found
                     try:
                         idx = self.target_id.index(cls_id)
                         target_flags[idx] = True

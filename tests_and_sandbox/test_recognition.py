@@ -4,7 +4,7 @@ from ultralytics import YOLO
 from libcamera import controls
 from collections import deque
 
-# 1. INITIALIZE VARIABLES OUTSIDE THE LOOP
+# 1. INITIALISE VARIABLES OUTSIDE THE LOOP
 # These must stay outside so they accumulate data over time
 inference_history = deque(maxlen=100)
 frame_count = 0
@@ -74,7 +74,7 @@ try:
 except KeyboardInterrupt:
     print("\n[INFO] Keyboard Interrupt detected. Calculating final results...")
 
-# 5. FINAL PRINTING (Runs whether you press 'q' or 'Ctrl+C')
+# 5. FINAL PRINTING (Runs whether 'q' or 'Ctrl+C' is used)
 finally:
     if frame_count > 0:
         print("\n" + "=" * 30)

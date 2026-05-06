@@ -10,13 +10,13 @@ from bird_recognition import MLBirdClassifier
 import cv2
 import numpy as np
 
-# importing necessary functions from dotenv library
+# Import necessary functions from dotenv library
 from dotenv import load_dotenv
 
-# loading variables from .env file
+# Load variables from .env file
 load_dotenv()
 
-# --- Hardware Setup ---
+# Hardware Setup
 GPIO.setmode(GPIO.BCM)
 BCM4 = 4
 GPIO.setup(BCM4, GPIO.IN)
@@ -173,7 +173,8 @@ def main():
                         "PIR High! Movement detected (Animal/Other), recording in progress..."
                     )
 
-            # --- Persistent Stop Logic ---
+            # Persistent Stop Logic
+
             # This runs every loop, even if movement_detected is False
             if recorder.recording:
                 if (now - last_motion_time) > stop_delay:

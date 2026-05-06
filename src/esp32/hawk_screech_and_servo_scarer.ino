@@ -8,11 +8,11 @@ BluetoothA2DPSink a2dp_sink(i2s);
 Servo myservo;
 int servoPin = 4;
 
-// Use a "volatile" flag so both threads can see it
+// Volatile flag
 volatile bool triggerServo = false;
 
 void audio_state_changed(esp_a2d_audio_state_t state, void *ptr) {
-  // We only set the flag here. No delays, no heavy logic!
+  // Set the flag here
   if (state == ESP_A2D_AUDIO_STATE_STARTED) {
     triggerServo = true; 
   }
